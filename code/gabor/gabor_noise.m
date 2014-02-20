@@ -1,4 +1,4 @@
-function [patch] = tools_val_createdsmoothednoise(siz,kerneldev,dev)
+function [patch] = gabor_noise(siz,envelopedev,kerneldev,dev)
     %  [patch] = CreateSmoothedNoise(size,kerneldev,[dev])
 
     if nargin < 3, dev = 1; end
@@ -8,10 +8,14 @@ function [patch] = tools_val_createdsmoothednoise(siz,kerneldev,dev)
 
     kernelsiz = 2*ceil(kerneldev*3)+1;
     kernellim = 0.5*kernelsiz/kerneldev;
-    kernel = tools_val_normalpdf(linspace(-kernellim,+kernellim,kernelsiz),0,1,false);
-    kernel = kernel'*kernel;
+    kernel    = NormalPDF(linspace(-kernellim,+kernellim,kernelsiz),0,1);
+    kernel    = kernel'*kernel;
 
     patch = conv2(randn(siz+2*kernelsiz),kernel,'same');
     patch = patch(kernelsiz+1:end-kernelsiz,kernelsiz+1:end-kernelsiz);
     patch = patch/sqrt(sum(kernel(:).^2))*dev;
+    
+    [x,y] = meshgrid((1:siz)-(siz+1)/2);
+    patch = patch.*NormalPDF(sqrt(x.^2+y.^2),0,envelopedev);
+
 end

@@ -4,6 +4,8 @@
       requires ezyfit       (http://www.fast.u-psud.fr/ezyfit)
 %}
 
+clear all;
+
 %% SET
 set_parameters;
 set_participant;
@@ -16,13 +18,9 @@ try
     % show introduction screen
     ptb_screen_intro;
     
-    %% STAIRCASE
-    % set staircase
-    set_stair;
-    % do staircase
-    do_stair;
-    
     %% TASK
+    % task screen
+    ptb_screen_task;
     % set task
     set_task;
     % do task
@@ -34,15 +32,13 @@ try
     % close psychtoolbox
     ptb_stop;
     % clean
-    data_clear;
+%    data_clear;
     
 catch err
     % close psychtoolbox
     ptb_stop;
     % save data
-    data_error;
-    % send mail
-    set_alert;
+%    data_error;
     % rethrow error
     rethrow(err);
 end

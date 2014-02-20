@@ -1,6 +1,5 @@
             
 if ~parameters.time_fixation; return; end;
-if parameters.flag_virtual; return; end
 if end_of_task; return; end
 
 %% Background
@@ -15,8 +14,6 @@ ptb.screen_time_next = ptb.screen_time_this + parameters.time_fixation;
 
 %% Plot
 while GetSecs() < ptb.screen_time_next
-    % draw interface
-    ptb_screen_plotchecker;
     ptb_screen_plotfixation;
     % flip
     Screen(ptb.screen_w,'Flip');

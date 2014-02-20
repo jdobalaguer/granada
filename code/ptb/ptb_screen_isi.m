@@ -1,7 +1,6 @@
 
 if i_trial==1; return; end
 if ~parameters.time_isi; return; end;
-if parameters.flag_virtual; return; end
 if end_of_task; return; end
 
 %% Background
@@ -14,10 +13,5 @@ while (ptb.screen_time_next>GetSecs); end
 ptb.screen_time_this = GetSecs;
 ptb.screen_time_next = ptb.screen_time_this + parameters.time_isi;
 
-%% Plot
-while GetSecs() < ptb.screen_time_next
-    % draw interface
-    ptb_screen_plotchecker;
-    % flip
-    Screen(ptb.screen_w,'Flip');
-end
+%% Flip
+Screen(ptb.screen_w,'Flip');

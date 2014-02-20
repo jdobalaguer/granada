@@ -1,5 +1,3 @@
-
-if parameters.flag_virtual; return; end
  
 %% Time
 ptb.time_stop = GetSecs;
