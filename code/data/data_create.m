@@ -18,6 +18,8 @@ data.vb_isi       = zeros(1,0);
 data.vb_contrast  = zeros(1,0);
 data.vb_phase     = zeros(1,0);
 data.vb_angle     = zeros(1,0);
+data.vb_frame     = zeros(1,0);
+data.vb_distance  = zeros(1,0);
 
 % response
 data.resp_getsecs = zeros(1,0);

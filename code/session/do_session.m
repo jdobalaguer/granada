@@ -1,8 +1,4 @@
     
-%% INITIALIZE
-% create data
-data_create;
-
 %% SESSION
 screen_presession;
 while ~index.endsession

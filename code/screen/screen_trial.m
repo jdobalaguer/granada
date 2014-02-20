@@ -3,6 +3,7 @@
 Screen(ptb.screen_w, 'FillRect',  ptb.screen_bg_color);
 
 %% Plot
+plot_frame;
 plot_gabor;
 
 %% Time

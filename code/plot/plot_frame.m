@@ -1,0 +1,9 @@
+
+Screen( ptb.screen_w,                                           ... window
+        'FillRect',                                             ... fill oval
+        parameters.frame_colours(data.vb_frame(index.trial),:), ... colour
+        [                                                       ... rectangle
+            ptb.screen_center - .5 * parameters.frame_size,     ...
+            ptb.screen_center + .5 * parameters.frame_size      ...
+        ]                                                       ...
+    );

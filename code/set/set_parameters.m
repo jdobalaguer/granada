@@ -8,15 +8,21 @@ parameters.flag_debug       = 0;
 %parameters.vb_      = ;
 
 %% task
-parameters.task_nbsessions  = 2;
-parameters.task_nbtrials    = 2;
+parameters.task_nbsessions  =  8;
+parameters.task_nbtrials    = 80;
 
 %% time
-parameters.time_presession  = 0.5; %10.0;
-parameters.time_trial       = 0.5; % 1.5;
-parameters.time_isimin      = 0.5; % 2.0;
-parameters.time_isimax      = 0.5; % 6.0;
-parameters.time_possession  = 0.5; % 5.0;
+parameters.time_presession  = 10.0;
+parameters.time_trial       =  1.5;
+parameters.time_isimin      =  2.0;
+parameters.time_isimax      =  5.0;
+parameters.time_possession  =  5.0;
+
+parameters.time_presession  = 0.5;
+parameters.time_trial       = 0.5;
+parameters.time_isimin      = 0.5;
+parameters.time_isimax      = 0.5;
+parameters.time_possession  = 0.5;
 
 %% screen
 % general
@@ -47,3 +53,6 @@ parameters.gabor_phase           = 0;
 parameters.gabor_contrast        = [1, 100]; %str2double(input('  Contrast: ','s'));
 parameters.gabor_noisekerneldev  = 10;
 parameters.gabor_noisedev        = 30;
+% frame
+parameters.frame_size            = 500;
+parameters.frame_colours         = 255 .* jet(5);
