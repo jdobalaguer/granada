@@ -1,3 +1,3 @@
 
-clearvars('-except','data','parameters','participant','ptb');
+clearvars('-except','data','index','parameters','participant','ptb');
 

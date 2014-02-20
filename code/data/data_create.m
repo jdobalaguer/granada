@@ -9,9 +9,12 @@ data = struct();
 data.exp_subject  = zeros(1,0);
 data.exp_session  = zeros(1,0);
 data.exp_trial    = zeros(1,0);
+data.exp_trigger  = zeros(1,0);
+data.exp_bonus    = zeros(1,0);
 
 % variables
 data.vb_getsecs   = zeros(1,0);
+data.vb_isi       = zeros(1,0);
 data.vb_contrast  = zeros(1,0);
 data.vb_phase     = zeros(1,0);
 data.vb_angle     = zeros(1,0);

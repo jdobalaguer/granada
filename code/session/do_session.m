@@ -3,7 +3,9 @@
 % create data
 data_create;
 
-while ~end_of_session
+%% SESSION
+screen_presession;
+while ~index.endsession
     %% TRIAL
     % set trial
     set_trial;
@@ -13,3 +15,8 @@ while ~end_of_session
     %% END OF SESSION
     set_endofsession;
 end
+screen_possession;
+
+%% SAVE
+% save data
+data_save;

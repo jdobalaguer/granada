@@ -9,21 +9,6 @@ function tools_deletedata()
     fprintf('\n');
 
     %% donefiles
-    % ls the 'data' folder
-    lsdata = regexp(ls('data'),'\s','split');
-    i = 1;
-    while i<=length(lsdata)
-        if isempty(lsdata{i})
-            lsdata(i) = [];
-        else
-            i = i+1;
-        end
-    end
-    nb_lsdata = length(lsdata);
-
-    %% move them
-    for i_lsdata = 1:nb_lsdata
-        delete(['data/',lsdata{i_lsdata}]);
-    end
+    delete('data/*');
 
 end

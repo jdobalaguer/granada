@@ -2,25 +2,25 @@
 parameters = struct();
 
 %% flag
-parameters.flag_debug         = 0;
+parameters.flag_debug       = 0;
 
 %% variables
 %parameters.vb_      = ;
 
 %% task
-parameters.task_nbsessions = 4;
-parameters.task_nbtrials   = 25;
+parameters.task_nbsessions  = 2;
+parameters.task_nbtrials    = 2;
 
 %% time
-parameters.time_fixation    = 1;
-parameters.time_response    = 2;
-parameters.time_minresponse = 0.2;
-parameters.time_feedback    = 0.2;
-parameters.time_isi         = 1;
+parameters.time_presession  = 0.5; %10.0;
+parameters.time_trial       = 0.5; % 1.5;
+parameters.time_isimin      = 0.5; % 2.0;
+parameters.time_isimax      = 0.5; % 6.0;
+parameters.time_possession  = 0.5; % 5.0;
 
 %% screen
 % general
-parameters.screen_rect      = [0,0,600,400];
+%parameters.screen_rect      = [0,0,600,400];
 parameters.screen_bg_color  = [128,128,128];
 parameters.screen_fontcolor = [224,224,224];
 parameters.screen_fontbgcolor = [0,0,0,0];
@@ -44,6 +44,6 @@ parameters.gabor_envelopedev     = 7 * parameters.gabor_size;
 parameters.gabor_angle           = 45;
 parameters.gabor_frequency       = 0.03;
 parameters.gabor_phase           = 0;
-parameters.gabor_contrast        = 1; %str2double(input('  Contrast: ','s'));
+parameters.gabor_contrast        = [1, 100]; %str2double(input('  Contrast: ','s'));
 parameters.gabor_noisekerneldev  = 10;
 parameters.gabor_noisedev        = 30;

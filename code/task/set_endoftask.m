@@ -1,4 +1,4 @@
 
-if i_session >= parameters.task_nbsessions
-    end_of_task = 1;
+if index.session >= parameters.task_nbsessions
+    index.endtask = 1;
 end

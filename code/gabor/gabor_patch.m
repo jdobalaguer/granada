@@ -1,5 +1,5 @@
 
-function patch = gabor_patch(parameters,angle)
+function patch = gabor_patch(parameters,contrast,angle)
     % [patch] = gabor_patch(parameters,sign)
     
     %% create gabor
@@ -9,7 +9,7 @@ function patch = gabor_patch(parameters,angle)
         angle,                          ... angle
         parameters.gabor_frequency,     ... frequency
         parameters.gabor_phase,         ... phase
-        parameters.gabor_contrast       ... contrast
+        contrast                        ... contrast
         ));
     
     %% create noise

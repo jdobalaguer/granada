@@ -12,10 +12,3 @@ else
     participant.sex  = '';
     participant.hand = '';
 end
-
-%% experiment info
-disp('Experiment')
-participant.id = str2double(input('  Id: ','s'));
-while isnan(participant.id)
-    participant.id = str2double(input('  Id (introduce a valid number): ','s'));
-end

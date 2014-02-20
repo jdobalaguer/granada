@@ -1,13 +1,14 @@
 %{
     notes:
       requires PsychToolbox (http://psychtoolbox.org/HomePage)
-      requires ezyfit       (http://www.fast.u-psud.fr/ezyfit)
 %}
 
 clear all;
+delete('data/*');
 
 %% SET
 set_parameters;
+set_index;
 set_participant;
 
 %% EXPERIMENT
@@ -16,11 +17,11 @@ try
     % initialise psychtoolbox
     ptb_start;
     % show introduction screen
-    ptb_screen_intro;
+    screen_intro;
     
     %% TASK
     % task screen
-    ptb_screen_task;
+    screen_task;
     % set task
     set_task;
     % do task
@@ -28,17 +29,17 @@ try
     
     %% END
     % show end screen
-    ptb_screen_end;
+    screen_end;
     % close psychtoolbox
     ptb_stop;
     % clean
-%    data_clear;
+    data_clear;
     
 catch err
     % close psychtoolbox
     ptb_stop;
     % save data
-%    data_error;
+    data_error;
     % rethrow error
     rethrow(err);
 end

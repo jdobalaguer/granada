@@ -15,11 +15,16 @@ ptb.time_start = GetSecs;
 
 %% Screen
 % open window
-if isfield(parameters,'screen_rect') && ~isempty(parameters.screen_rect)
-    [tmp_w, tmp_r] = Screen('OpenWindow', 0, 0,parameters.screen_rect,32,2);
-else
-    [tmp_w, tmp_r] = Screen('OpenWindow', 0, 0,[],32,2);
+if ~isfield(parameters,'screen_rect')
+    parameters.screen_rect = [];
 end
+[tmp_w, tmp_r] = Screen('OpenWindow',                           ...
+                            tools_index(Screen('Screens'),0),   ... screen
+                            [],                                 ... colour
+                            parameters.screen_rect,             ... rectangle
+                            32,                                 ... pixel size
+                            2                                   ... nb of buffers
+                        );
 
 % values
 ptb.screen_w            = tmp_w;

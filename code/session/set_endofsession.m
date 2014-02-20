@@ -1,4 +1,4 @@
 
-if i_trial >= parameters.task_nbtrials
-    end_of_session = 1;
+if index.trial >= parameters.task_nbtrials
+    index.endsession = 1;
 end

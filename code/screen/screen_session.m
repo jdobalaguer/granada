@@ -1,4 +1,3 @@
-
 if parameters.flag_debug; return; end
 
 Screen(ptb.screen_w, 'FillRect',  ptb.screen_bg_color);
@@ -7,10 +6,15 @@ Screen(ptb.screen_w, 'TextSize',  parameters.screen_fontsize);
 Screen(ptb.screen_w, 'TextColor', parameters.screen_fontcolor);
 Screen(ptb.screen_w, 'TextBackgroundColor', parameters.screen_fontbgcolor);
 
-% Screen
+%% Plot
 DrawFormattedText(ptb.screen_w,parameters.screen_txtsession,'center','center');
 
-% Flip
-[tmp_vbltimestamp,tmp_stimulusonset] = Screen(ptb.screen_w,'Flip');
-ptb.screen_time_this = tmp_stimulusonset;
-ptb.screen_time_next = tmp_stimulusonset;
+%% Time
+ptb.screen_time_this = GetSecs;
+ptb.screen_time_next = ptb.screen_time_this;
+
+%% Flip
+Screen(ptb.screen_w,'Flip');
+
+%% Wait
+resp_trigger;

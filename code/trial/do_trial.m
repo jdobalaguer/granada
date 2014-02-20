@@ -1,13 +1,9 @@
 
 %% TRIAL
 % isi screen
-ptb_screen_isi;
-% fixation screen
-ptb_screen_fixation;
+screen_isi;
 % trial screen
-ptb_screen_trial;
-% feedback screen
-ptb_screen_feedback;
+screen_trial;
 
 %% DATA
 data_add;
