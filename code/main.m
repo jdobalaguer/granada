@@ -4,7 +4,6 @@
 %}
 
 clear all;
-delete('data/*');
 
 %% SET
 set_parameters;

@@ -3,7 +3,10 @@ if index.endtask; return; end
 Screen(ptb.screen_w, 'FillRect',  ptb.screen_bg_color);
 
 %% Plot
+plot_bonus;
+plot_color;
 plot_fixation;
+plot_distance;
 
 %% Time
 ptb.screen_time_this = GetSecs;

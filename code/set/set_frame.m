@@ -1,6 +1,6 @@
 
 %% Set frames
-nb_frames = size(parameters.frame_colours,1);
+nb_frames = parameters.frame_number;
 u_frame   = zeros(1,nb_frames+1);
 
 while any(diff(u_frame) <  4)  || ...
