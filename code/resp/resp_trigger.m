@@ -9,7 +9,7 @@ while isnan(index.gs_trigger)
     [down,secs,code] = KbCheck();
 
     % save trigger
-    if down && code(KbName('S'))
+    if (down && code(KbName('S'))) || ~parameters.flag_scanner
         index.gs_trigger = gs;
         break;
     end

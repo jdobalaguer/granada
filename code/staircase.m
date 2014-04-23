@@ -9,7 +9,6 @@ clear all;
 set_parameters;
 set_index;
 set_participant;
-set_conditions;
 
 %% EXPERIMENT
 try
@@ -19,13 +18,13 @@ try
     % show introduction screen
     screen_intro;
     
-    %% TASK
+    %% NOT-A-STAIRCASE
     % task screen
     screen_task;
     % set task
-    set_task;
+    set_stair;
     % do task
-    do_task;
+    do_stair;
     
     %% END
     % show end screen
@@ -34,6 +33,12 @@ try
     ptb_stop;
     % clean
     data_clear;
+    
+    %% PSYCHOMETRY
+    stair_psychometry;
+    
+    %% SAVE
+    data_save;
     
 catch err
     % close psychtoolbox

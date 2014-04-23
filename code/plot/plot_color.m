@@ -1,3 +1,5 @@
+if ~index.session, return; end
+if ~parameters.task_usessions(index.session), return; end
 
 %% Plot colours
 nb_frames = parameters.frame_number;

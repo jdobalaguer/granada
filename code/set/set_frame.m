@@ -1,14 +1,21 @@
 
+%% Set condition
+if parameters.task_usessions(index.session)
+    nb_frames = parameters.frame_number;
+else
+    nb_frames = 1;
+end
+
 %% Set frames
-nb_frames = parameters.frame_number;
 u_frame   = zeros(1,nb_frames+1);
 
-while any(diff(u_frame) <  4)  || ...
-      any(diff(u_frame) > 36) 
+while any(diff(u_frame) <  4)  || any(diff(u_frame) > 36) 
         
     u_frame(1)       = 1;
     u_frame(2:end-1) = sort(randi(parameters.task_nbtrials,1,nb_frames-1));
-    u_frame(end)     = parameters.task_nbtrials;
+    u_frame(end)     = parameters.task_nbtrials+1;
+    
+    if nb_frames==1, break; end
 end
     
 %% Set data

@@ -12,5 +12,5 @@ ptb.screen_time_next = ptb.screen_time_this + parameters.time_presession;
 Screen(ptb.screen_w,'Flip');
 
 %% Wait
-while GetSecs < ptb.screen_time_next
+while (GetSecs < ptb.screen_time_next) && parameters.flag_scanner
 end

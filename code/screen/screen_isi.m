@@ -3,14 +3,16 @@ if index.endtask; return; end
 Screen(ptb.screen_w, 'FillRect',  ptb.screen_bg_color);
 
 %% Plot
+plot_frame;
 plot_bonus;
 plot_color;
-plot_fixation;
+
 plot_distance;
 
 %% Time
 ptb.screen_time_this = GetSecs;
 ptb.screen_time_next = ptb.screen_time_this + trialstruct.vb_isi;
+
 
 %% Flip
 Screen(ptb.screen_w,'Flip');
