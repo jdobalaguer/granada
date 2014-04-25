@@ -20,6 +20,7 @@ data.vb_phase     = zeros(1,0);
 data.vb_angle     = zeros(1,0);
 data.vb_frame     = zeros(1,0);
 data.vb_distance  = zeros(1,0);
+data.vb_condition = zeros(1,0);
 
 % response
 data.resp_getsecs = zeros(1,0);

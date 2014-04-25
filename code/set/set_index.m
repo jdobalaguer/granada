@@ -6,7 +6,7 @@ disp('Index')
 
 % subject
 index.subject = nan;
-while isnan(index.subject)
+while isnan(index.subject) || index.subject<0 || index.subject>999
     index.subject = str2double(input('  Id : ','s'));
 end
 

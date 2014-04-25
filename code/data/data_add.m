@@ -18,6 +18,7 @@ data.vb_isi(end+1)       = trialstruct.vb_isi;
 data.vb_contrast(end+1)  = trialstruct.vb_contrast;
 data.vb_phase(end+1)     = trialstruct.vb_phase;
 data.vb_angle(end+1)     = trialstruct.vb_angle;
+data.vb_condition(end+1) = trialstruct.vb_condition;
 
 % response
 

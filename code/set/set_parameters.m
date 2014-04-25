@@ -7,14 +7,14 @@ parameters.flag_scanner         = 1;
 
 %% task
 parameters.task_nbsessions      =   4;
-parameters.task_nbtrials        = 100;
-parameters.task_bonus           =  12.80;
+parameters.task_nbtrials        = 150;
+parameters.task_bonus           =  5;
 parameters.task_usessions       =  [];
 
 %% staircase
-parameters.stair_nb             =   8;
-parameters.stair_samples        =  30;
-parameters.stair_range          = [2,40];
+parameters.stair_nb             =   9;
+parameters.stair_samples        =  50;
+parameters.stair_range          = [3,30];
 parameters.stair_contrasts      = exp(linspace(log(parameters.stair_range(1)),log(parameters.stair_range(2)), parameters.stair_nb));
 parameters.stair_performance    = 0.6 : 0.05 : 0.9;
 
