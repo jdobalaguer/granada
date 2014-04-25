@@ -9,7 +9,9 @@ trialstruct.vb_isi          = parameters.time_isimin + (parameters.time_isimax -
 trialstruct.vb_contrast     = parameters.gabor_contrast(randi(length(parameters.gabor_contrast)));
 trialstruct.vb_phase        = rand();
 trialstruct.vb_angle        = randsample([-1,+1],1) * parameters.gabor_angle;
-trialstruct.vb_condition    = parameters.task_usessions(index.session);
+if index.session>0, trialstruct.vb_condition    = parameters.task_usessions(index.session);
+else                trialstruct.vb_condition    = 0;
+end
 trialstruct.resp_getsecs    = nan;
 trialstruct.resp_rt         = nan;
 trialstruct.resp_angle      = nan;
