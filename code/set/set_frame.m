@@ -9,7 +9,8 @@ end
 %% Set frames
 u_frame   = zeros(1,nb_frames+1);
 
-while any(diff(u_frame) <  4)  || 1.5*any(diff(u_frame) > parameters.task_nbtrials/parameters.frame_number) 
+while   any(diff(u_frame) < 0.20*parameters.task_nbtrials/parameters.frame_number)  || ...
+        any(diff(u_frame) > 1.50*parameters.task_nbtrials/parameters.frame_number)
         
     u_frame(1)       = 1;
     u_frame(2:end-1) = sort(randi(parameters.task_nbtrials,1,nb_frames-1));
