@@ -3,10 +3,10 @@
 Screen(ptb.screen_w, 'FillRect',  ptb.screen_bg_color);
 
 %% Plot
-plot_frame;
-plot_bonus;
 plot_color;
-plot_gabor;
+plot_frame;
+plot_dots;
+plot_bonus;
 plot_distance;
 
 %% Time
@@ -20,21 +20,21 @@ Screen(ptb.screen_w,'Flip');
 %% Wait
 % get response
 gs = GetSecs();
-while   gs < ptb.screen_time_next       && ... time
-        isnan(trialstruct.resp_angle)   && ... response
-        ~index.endtask                     ... exit
+while   gs < ptb.screen_time_next          && ... time
+        isnan(trialstruct.resp_category)   && ... response
+        ~index.endtask                        ... exit
         
     % resonse
     resp_trial;
     
     % hide stimulus
-    if ~isnan(trialstruct.resp_angle)
+    if ~isnan(trialstruct.resp_category)
         while GetSecs < ptb.screen_time_this + parameters.time_stimulus; end
     end
     if GetSecs > ptb.screen_time_this + parameters.time_stimulus
+        plot_color;
         plot_frame;
         plot_bonus;
-        plot_color;
         plot_distance;
         Screen(ptb.screen_w,'Flip');
     end

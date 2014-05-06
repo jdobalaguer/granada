@@ -1,3 +1,5 @@
+if ~parameters.flag_audio, return; end
+
 % create pitch array
 tmp_iymax = round(ptb.audio_duration*ptb.audio_sampling);
 tmp_y = sin(linspace(0,ptb.audio_duration*ptb.audio_freqlow,tmp_iymax));

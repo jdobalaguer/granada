@@ -4,9 +4,6 @@ disp('Conditions');
 %% warning
 %#ok<*ST2NM>
 
-%% contrast
-parameters.gabor_contrast = str2num(input('  Contrast: ','s'));
-
 %% sessions
 nb_sessions = parameters.task_nbsessions;
 parameters.task_usessions = zeros(1,nb_sessions);
