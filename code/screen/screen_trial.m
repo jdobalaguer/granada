@@ -6,7 +6,6 @@ Screen(ptb.screen_w, 'FillRect',  ptb.screen_bg_color);
 plot_color;
 plot_frame;
 plot_dots;
-plot_bonus;
 plot_distance;
 
 %% Time
@@ -34,7 +33,6 @@ while   gs < ptb.screen_time_next          && ... time
     if GetSecs > ptb.screen_time_this + parameters.time_stimulus
         plot_color;
         plot_frame;
-        plot_bonus;
         plot_distance;
         Screen(ptb.screen_w,'Flip');
     end
@@ -45,8 +43,6 @@ while GetSecs < ptb.screen_time_next
 end
 % no response
 resp_none;
-% set bonus
-set_bonus;
 
 %% Clean
 clear gs;

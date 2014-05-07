@@ -10,7 +10,6 @@ data.exp_subject    = zeros(1,0);
 data.exp_session    = zeros(1,0);
 data.exp_trial      = zeros(1,0);
 data.exp_trigger    = zeros(1,0);
-data.exp_bonus      = zeros(1,0);
 
 % variables
 data.vb_getsecs     = zeros(1,0);
@@ -22,9 +21,12 @@ data.vb_category    = zeros(1,0);
 data.vb_frame       = zeros(1,0);
 data.vb_distance    = zeros(1,0);
 data.vb_condition   = zeros(1,0);
+data.vb_position    = cell(1,0);
+data.vb_radius      = cell(1,0);
 
 % response
 data.resp_getsecs   = zeros(1,0);
 data.resp_rt        = zeros(1,0);
 data.resp_category  = zeros(1,0);
+data.resp_dots      = zeros(1,0);
 data.resp_correct   = zeros(1,0);

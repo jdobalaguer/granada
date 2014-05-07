@@ -4,12 +4,12 @@ parameters = struct();
 %% flag
 parameters.flag_debug           = 0;
 parameters.flag_scanner         = 1;
-parameters.flag_audio           = 0;
+parameters.flag_audio           = 1;
 
 %% task
 parameters.task_nbsessions      =   8;
 parameters.task_nbtrials        =  75;
-parameters.task_bonus           =   5;
+parameters.task_bonus           =   3;
 parameters.task_usessions       =  [];
 
 %% keyboard
@@ -37,8 +37,9 @@ parameters.screen_fontname      = 'Arial';
 %% messages
 parameters.screen_txtintro      = 'hola, gracias por participar!';
 parameters.screen_txttask       = 'preparado?';
+parameters.screen_txtbreak      = 'pausa';
 parameters.screen_txtsession    = 'esperando trigger..';
-parameters.screen_txtbonus      = 'Bonus: %.2f EUR';
+parameters.screen_txtlottery    = 'tu bonus es de %.2f EUR !';
 parameters.screen_txtend        = 'fin del experimento! gracias por tu colaboracion.';
 
 %% stimulus
@@ -51,6 +52,9 @@ parameters.frame_small          =  50;
 parameters.frame_number         =   5;
 parameters.frame_colours        = 255 .* hsv2rgb([mod(linspace(0.10,0.90,parameters.frame_number)+rand(),1);ones(1,parameters.frame_number);ones(1,parameters.frame_number)]');
 % stimulus
-parameters.dots_numbers         = [6,9,15,24,38];
-parameters.dots_radius          = 5;
-parameters.dots_marge           = 3;
+parameters.dots_numbers         = [09,11,13,15,17];
+parameters.dots_radius          = [6,7,8,9,10];
+parameters.dots_marge           = 2;
+
+%% lottery
+parameters.lott_samples         = 3;

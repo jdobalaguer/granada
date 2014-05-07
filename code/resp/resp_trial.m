@@ -19,6 +19,7 @@ if down && sum(code)==1 && find(code)
             trialstruct.resp_getsecs    = gs;
             trialstruct.resp_rt         = gs - ptb.screen_time_this;
             trialstruct.resp_category   = -1;
+            trialstruct.resp_dots       = data.vb_left(index.trial);
             trialstruct.resp_correct    = (data.vb_category(index.trial) == trialstruct.resp_category);
             if ~data.vb_category(index.trial), trialstruct.resp_correct = rand()>0.5; end
             plot_beep;
@@ -27,6 +28,7 @@ if down && sum(code)==1 && find(code)
             trialstruct.resp_getsecs    = gs;
             trialstruct.resp_rt         = gs - ptb.screen_time_this;
             trialstruct.resp_category   = +1;
+            trialstruct.resp_dots       = data.vb_right(index.trial);
             trialstruct.resp_correct    = (data.vb_category(index.trial) == trialstruct.resp_category);
             if ~data.vb_category(index.trial), trialstruct.resp_correct = rand()>0.5; end
             plot_beep;

@@ -1,6 +1,6 @@
 
 function alldata = load_data()
-    path_dir = ['data',filesep()];
+    path_dir = ['data',filesep(),'data',filesep()];
     d = dir([path_dir,'data_*.mat']);
     d = strcat(path_dir,cell2mat({d(:).name}'));
     

@@ -5,6 +5,7 @@ while ~index.endtask
     % set session
     set_session;
     % task screen
+    screen_break;
     screen_session;
     % do session
     do_session;

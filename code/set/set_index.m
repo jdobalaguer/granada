@@ -21,6 +21,3 @@ index.endsession = 0;
 % trigger
 index.gs_trigger = nan;
 
-% bonus
-index.bonus   = 0;
-
