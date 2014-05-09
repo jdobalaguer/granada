@@ -3,13 +3,15 @@
 %#ok<*ASGLU>
 
 %% frame change
-function plot_rt_framechange()
+function plot_rt_framechange(path)
+    if ~exist('path','var'); path = 'data'; end
     
     n = 4;
     x = (1-n:n);
+    ymin = 400;
     
     % load
-    alldata = load_fixed();
+    alldata = load_fixed(path);
     
     % get frame change
     ii_change = (alldata.vb_distance  == 1) & ...
@@ -19,7 +21,7 @@ function plot_rt_framechange()
     f_prepos  = repmat(f_change,1,2*n) + repmat(x,length(f_change),1);
     
     % get RT
-    y = 1000 * alldata.resp_rt(f_prepos) - 550;
+    y = 1000 * alldata.resp_rt(f_prepos) - ymin;
     m = meeze(y);
     e = steeze(y);
     
@@ -30,9 +32,9 @@ function plot_rt_framechange()
     
     % figure
     sa = struct();
-    sa.ylim       = [550,850] - 550;
-    sa.ytick      = (500:100:900) - 550;
-    sa.yticklabel = num2leg(sa.ytick + 550);
+    sa.ylim       = [ymin,850] - ymin;
+    sa.ytick      = (500:100:900) - ymin;
+    sa.yticklabel = num2leg(sa.ytick + ymin);
     fig_axis(sa);
     fig_fontname(gcf(),'Arial');
     fig_fontsize(gcf(),20);

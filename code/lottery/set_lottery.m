@@ -1,4 +1,5 @@
 if parameters.flag_debug, return; end
+if index.endtask, return; end
 
 %% set bonus
 added = 0;

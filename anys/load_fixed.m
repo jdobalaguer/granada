@@ -1,17 +1,18 @@
 
-function alldata = load_fixed()
-    alldata = load_data();
+function alldata = load_fixed(path)
+    if ~exist('path','var'); path = 'data'; end
+    alldata = load_data(path);
     
     % numbers
     nb_subject = length(unique(alldata.exp_subject));
     nb_trial   = length(unique(alldata.exp_trial));
     
     % set random responses
-    for i = find(isnan(alldata.resp_angle))
+    for i = find(isnan(alldata.resp_category))
         if rand()>0.5
-            alldata.resp_angle(i) = 45;
+            alldata.resp_category(i) = -1;
         else
-            alldata.resp_angle(i) = -45;
+            alldata.resp_category(i) = +1;
         end
     end
     

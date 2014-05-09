@@ -1,4 +1,5 @@
 if parameters.flag_debug; return; end
+if index.endtask, return; end
 
 Screen(ptb.screen_w, 'FillRect',  ptb.screen_bg_color);
 Screen(ptb.screen_w, 'TextFont',  parameters.screen_fontname);

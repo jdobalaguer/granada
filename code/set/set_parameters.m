@@ -44,7 +44,7 @@ parameters.screen_txtend        = 'fin del experimento! gracias por tu colaborac
 
 %% stimulus
 % frame
-parameters.frame_radius         = 300;
+parameters.frame_radius         = 200;
 parameters.frame_thick_black    =   4;
 parameters.frame_thick_color    =  16;
 parameters.frame_fixation       =  50;
@@ -52,8 +52,8 @@ parameters.frame_small          =  50;
 parameters.frame_number         =   5;
 parameters.frame_colours        = 255 .* hsv2rgb([mod(linspace(0.10,0.90,parameters.frame_number)+rand(),1);ones(1,parameters.frame_number);ones(1,parameters.frame_number)]');
 % stimulus
-parameters.dots_numbers         = [09,11,13,15,17];
-parameters.dots_radius          = [6,7,8,9,10];
+parameters.dots_numbers         = [2,3,5,7,13];
+parameters.dots_radius          = [10,15];
 parameters.dots_marge           = 2;
 
 %% lottery
