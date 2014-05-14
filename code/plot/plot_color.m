@@ -14,8 +14,8 @@ for i_frame = 1:n_frame
     Screen( ptb.screen_w,                                           ... window
             'FillOval',                                             ... fill oval
             parameters.frame_colors(i_frame,:),                     ... color
-            [   position - .5 * parameters.frame_small,... rectangle
-                position + .5 * parameters.frame_small...
+            [   position - .5 * parameters.frame_small,             ... rectangle
+                position + .5 * parameters.frame_small              ...
             ]                                                       ...
         );
     

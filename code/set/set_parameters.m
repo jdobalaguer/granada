@@ -9,7 +9,7 @@ parameters.flag_verbose         = 1;
 
 %% task
 parameters.task_nbsessions      =  5;
-parameters.task_nbtrials        = 15;%75;
+parameters.task_nbtrials        = 75;
 
 %% keyboard
 parameters.key_escape           = 'Escape';
@@ -46,15 +46,12 @@ parameters.screen_txtend        = 'fin del experimento! gracias por tu colaborac
 
 %% gamble
 % wins
-% parameters.gamble_wins          = [+1.00 , +1.50 , +2.00 , +2.50 , +3.00 , +1.00 , +1.50 , +2.00 , +2.50 , +3.00 , +1.50 , +2.00 , +2.50 , +3.00 , +2.00 , +2.50 , +3.00];
 parameters.gamble_wins = repmat(reshape(+1.00:+1.00:+3.00,[3,1,1]),[1,3,3]);
 parameters.gamble_wins = parameters.gamble_wins(:);
 % loss
-% parameters.gamble_loss          = [-0.40 , -0.90 , -1.40 , -1.90 , -2.40 , -0.17 , -0.50 , -0.83 , -1.17 , -1.50 , -0.21 , -0.43 , -0.64 , -0.86 , -0.12 , -0.25 , -0.37];
 parameters.gamble_loss = repmat(reshape(-1.00:-1.00:-3.00,[1,3,1]),[3,1,3]);
 parameters.gamble_loss = parameters.gamble_loss(:);
 % prob
-% parameters.gamble_prob          = [ 0.50 ,  0.50 ,  0.50 ,  0.50 ,  0.50 ,  0.40 ,  0.40 ,  0.40 ,  0.40 ,  0.40 ,  0.30 ,  0.30 ,  0.30 ,  0.30 ,  0.20 ,  0.20 ,  0.20];
 parameters.gamble_prob = repmat(reshape([0.33,0.50,0.66],[1,1,3]),[3,3,1]);
 parameters.gamble_prob = parameters.gamble_prob(:);
 % baseline
