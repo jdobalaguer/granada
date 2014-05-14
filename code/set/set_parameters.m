@@ -2,14 +2,14 @@
 parameters = struct();
 
 %% flag
-parameters.flag_debug           = 1;%0;
-parameters.flag_scanner         = 0;%1;
+parameters.flag_debug           = 0;
+parameters.flag_scanner         = 1;
 parameters.flag_audio           = 1;
 parameters.flag_verbose         = 1;
 
 %% task
 parameters.task_nbsessions      =  5;
-parameters.task_nbtrials        = 5;%75;
+parameters.task_nbtrials        = 15;%75;
 
 %% keyboard
 parameters.key_escape           = 'Escape';
@@ -62,9 +62,8 @@ parameters.gamble_not           = -0.10;
 parameters.gamble_miss          = -1.00;
 
 %% lottery
-parameters.lottery_min            = 0;
-parameters.lottery_max            = 5;
-
+parameters.lottery_min            = -1;
+parameters.lottery_max            = +3;
 %% stimulus
 % frame
 parameters.frame_thick          =   4;

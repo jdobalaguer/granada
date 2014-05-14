@@ -8,7 +8,7 @@ Screen(ptb.screen_w, 'TextColor', parameters.screen_fontcolor);
 Screen(ptb.screen_w, 'TextBackgroundColor', parameters.screen_fontbgcolor);
 
 %% Plot
-DrawFormattedText(ptb.screen_w,sprintf(parameters.screen_txtlottery,index.lottery),'center','center');
+DrawFormattedText(ptb.screen_w,sprintf(parameters.screen_txtlottery,index.lottery(index.session)),'center','center');
 
 %% Time
 ptb.screen_time_this = GetSecs;
