@@ -7,7 +7,7 @@ Screen(ptb.screen_w, 'TextColor', parameters.frame_colors(data.vb_frame(index.tr
 Screen(ptb.screen_w, 'TextBackgroundColor', parameters.screen_fontbgcolor);
 
 %% Fixation
-% black
+% frame
 Screen( ptb.screen_w,                                           ... window
     'FillOval',                                                 ... fill oval
     parameters.frame_colors(data.vb_frame(index.trial),:),      ... color
@@ -31,5 +31,5 @@ DrawFormattedText(  ...
         sprintf('%d',data.vb_distance(index.trial)),            ... text
         'center',                                               ... sx
         'center',                                               ... sy
-        parameters.screen_fontcolor                             ... color
+        parameters.frame_colors(data.vb_frame(index.trial),:)   ... color
     );

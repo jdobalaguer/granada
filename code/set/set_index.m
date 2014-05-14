@@ -26,3 +26,4 @@ index.gs_trigger = nan;
 
 % bonus
 index.bonus = [];
+index.lottery = [];

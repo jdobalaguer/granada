@@ -11,7 +11,7 @@ data_create;
 %% task
 set_color;
 set_frame;
-set_reversal;
+set_gamble;
 
 %% filenames
 set_filenames;

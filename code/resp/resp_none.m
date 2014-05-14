@@ -1,6 +1,5 @@
 
-if isnan(trialstruct.resp_category)
-    trialstruct.resp_correct = 0;
-    plot_beep;
-    plot_verbose_resp;
+if isnan(trialstruct.resp_gamble)
+    trialstruct.resp_value  = parameters.gamble_miss;
+    screen_feedback;
 end

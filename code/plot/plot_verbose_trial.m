@@ -2,6 +2,7 @@
 %% verbose
 if parameters.flag_verbose
     fprintf('\n');
-    fprintf('category %d \n',data.vb_category(index.trial));
-    fprintf('coherent %d \n',data.vb_coherent(index.trial));
+    fprintf('win         %.2f \n',data.vb_wins(index.trial));
+    fprintf('loss        %.2f \n',data.vb_loss(index.trial));
+    fprintf('probability %.2f \n',data.vb_prob(index.trial));
 end

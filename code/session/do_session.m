@@ -19,6 +19,12 @@ while ~index.endsession && ~index.escape
 end
 screen_possession;
 
+%% LOTTERY
+% set lottery
+set_lottery;
+% do lottery
+do_lottery;
+
 %% SAVE
 % save data
 data_save;

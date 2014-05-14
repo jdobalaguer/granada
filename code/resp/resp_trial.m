@@ -13,22 +13,22 @@ if down && sum(code)==1 && find(code)
         case KbName(parameters.key_escape)
             index.escape     = 1;
             fprintf('Exit forced by user.\n');
-        % left
-        case KbName(parameters.key_left);
+        % gamble
+        case KbName(parameters.key_gamble);
             trialstruct.resp_getsecs    = gs;
             trialstruct.resp_rt         = gs - ptb.screen_time_this;
-            trialstruct.resp_category   = -1;
-            trialstruct.resp_correct    = (data.vb_category(index.trial)*data.vb_coherent(index.trial) == trialstruct.resp_category);
-            plot_beep;
-            plot_verbose_resp;
-        % right
-        case KbName(parameters.key_right);
+            trialstruct.resp_gamble     = 1;
+            if rand() > data.vb_prob(index.trial),  resp_loss;
+            else                                    resp_wins;
+            end
+            screen_feedback;
+        % gamble
+        case KbName(parameters.key_reject);
             trialstruct.resp_getsecs    = gs;
             trialstruct.resp_rt         = gs - ptb.screen_time_this;
-            trialstruct.resp_category   = +1;
-            trialstruct.resp_correct    = (data.vb_category(index.trial)*data.vb_coherent(index.trial) == trialstruct.resp_category);
-            plot_beep;
-            plot_verbose_resp;
+            trialstruct.resp_gamble     = 0;
+            trialstruct.resp_value      = parameters.gamble_not;
+            screen_feedback;
     end
 end
 

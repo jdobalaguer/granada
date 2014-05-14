@@ -26,12 +26,6 @@ try
     % do task
     do_task;
     
-    %% LOTTERY
-    % set lottery
-    set_lottery;
-    % do lottery
-    do_lottery;
-    
     %% END
     % show end screen
     screen_end;

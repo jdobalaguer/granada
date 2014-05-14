@@ -18,32 +18,28 @@ trialstruct.vb_getsecs = ptb.screen_time_this;
 %% Flip
 Screen(ptb.screen_w,'Flip');
 
-%% Wait
+%% Wait (trial)
 % get response
 gs = GetSecs();
 while   gs < ptb.screen_time_next          && ... time
-        isnan(trialstruct.resp_category)   && ... response
+        isnan(trialstruct.resp_gamble)     && ... response
         ~index.escape                         ... exit
         
     % resonse
     resp_trial;
     
-    % hide stimulus
-    if ~isnan(trialstruct.resp_category)
-        while GetSecs < ptb.screen_time_this + parameters.time_stimulus; end
-    end
-    if GetSecs > ptb.screen_time_this + parameters.time_stimulus
-        plot_color;
-        plot_distance;
-        Screen(ptb.screen_w,'Flip');
-    end
-    
 end
-% wait until end
+
+%% no response
+resp_none;
+
+%% Time
+ptb.screen_time_this = GetSecs;
+ptb.screen_time_next = ptb.screen_time_this + parameters.time_feedback;
+
+%% Wait (feedback)
 while GetSecs < ptb.screen_time_next
 end
-% no response
-resp_none;
 
 %% Clean
 clear gs;

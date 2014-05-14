@@ -18,5 +18,5 @@ data.vb_isi(end+1)          = trialstruct.vb_isi;
 % response
 data.resp_getsecs(end+1)    = trialstruct.resp_getsecs;
 data.resp_rt(end+1)         = trialstruct.resp_rt;
-data.resp_category(end+1)   = trialstruct.resp_category;
-data.resp_correct(end+1)    = trialstruct.resp_correct;
+data.resp_gamble(end+1)     = trialstruct.resp_gamble;
+data.resp_value(end+1)      = trialstruct.resp_value;
