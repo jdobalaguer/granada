@@ -8,11 +8,10 @@ index.gs_trigger    = nan;
 %% data
 data_create;
 
-%% frame
+%% task
+set_color;
 set_frame;
-
-%% data
-data_set;
+set_reversal;
 
 %% filenames
 set_filenames;

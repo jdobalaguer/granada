@@ -12,21 +12,20 @@ data.exp_trial      = zeros(1,0);
 data.exp_trigger    = zeros(1,0);
 
 % variables
+    % time
 data.vb_getsecs     = zeros(1,0);
 data.vb_isi         = zeros(1,0);
-data.vb_left        = zeros(1,0);
-data.vb_right       = zeros(1,0);
-data.vb_max         = zeros(1,0);
-data.vb_category    = zeros(1,0);
+    % frame
 data.vb_frame       = zeros(1,0);
 data.vb_distance    = zeros(1,0);
-data.vb_condition   = zeros(1,0);
-data.vb_position    = cell(1,0);
-data.vb_radius      = cell(1,0);
+data.vb_distoend    = zeros(1,0);
+    % task
+data.vb_reversal    = zeros(1,0);
+data.vb_category    = zeros(1,0);
+data.vb_coherent    = zeros(1,0);
 
 % response
 data.resp_getsecs   = zeros(1,0);
 data.resp_rt        = zeros(1,0);
 data.resp_category  = zeros(1,0);
-data.resp_dots      = zeros(1,0);
 data.resp_correct   = zeros(1,0);

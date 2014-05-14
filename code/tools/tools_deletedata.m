@@ -9,6 +9,6 @@ function tools_deletedata()
     fprintf('\n');
 
     %% donefiles
-    delete('data/*');
+    delete('data/data/*');
 
 end

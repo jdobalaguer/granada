@@ -1,6 +1,6 @@
 
 %% TASK
-while ~index.endtask
+while ~index.endtask && ~index.escape
     %% SESSION
     % set session
     set_session;

@@ -1,3 +1,4 @@
+if index.escape; return; end
 if ~parameters.flag_audio, return; end
 
 % create pitch array

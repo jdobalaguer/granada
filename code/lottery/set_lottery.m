@@ -1,5 +1,5 @@
 if parameters.flag_debug, return; end
-if index.endtask, return; end
+if index.escape, return; end
 
 %% set bonus
 added = 0;

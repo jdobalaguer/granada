@@ -1,4 +1,4 @@
-if index.endtask; return; end
+if index.escape; return; end
 
 %% Background
 Screen(ptb.screen_w, 'FillRect',  ptb.screen_bg_color);

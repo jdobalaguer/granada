@@ -2,10 +2,12 @@
 
 Screen(ptb.screen_w, 'FillRect',  ptb.screen_bg_color);
 
+%% Verbose
+plot_verbose_trial;
+
 %% Plot
 plot_color;
-plot_frame;
-plot_dots;
+plot_stimulus;
 plot_distance;
 
 %% Time
@@ -21,7 +23,7 @@ Screen(ptb.screen_w,'Flip');
 gs = GetSecs();
 while   gs < ptb.screen_time_next          && ... time
         isnan(trialstruct.resp_category)   && ... response
-        ~index.endtask                        ... exit
+        ~index.escape                         ... exit
         
     % resonse
     resp_trial;
@@ -32,7 +34,6 @@ while   gs < ptb.screen_time_next          && ... time
     end
     if GetSecs > ptb.screen_time_this + parameters.time_stimulus
         plot_color;
-        plot_frame;
         plot_distance;
         Screen(ptb.screen_w,'Flip');
     end

@@ -9,7 +9,6 @@ clear all;
 set_parameters;
 set_index;
 set_participant;
-set_conditions;
 
 %% EXPERIMENT
 try

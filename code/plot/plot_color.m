@@ -1,17 +1,16 @@
-if ~index.session, return; end
-if ~parameters.task_usessions(index.session), return; end
 
-%% Plot colours
-nb_frames = parameters.frame_number;
 
-for i_frame = 1:nb_frames
+%% Plot colors
+n_frame = parameters.frame_number;
+
+for i_frame = 1:n_frame
     
-    position =  [   ptb.screen_rect(1) + ptb.screen_drect(1) * (i_frame) / (nb_frames+1),   ...
-                    ptb.screen_rect(2) + ptb.screen_drect(2) - (2 * parameters.frame_small) ...
+    position =  [   ptb.screen_rect(1) + ptb.screen_drect(1) * (i_frame) / (n_frame+1),   ...
+                    ptb.screen_rect(2) + (2 * parameters.frame_small) ...
                 ];
     Screen( ptb.screen_w,                                           ... window
             'FillOval',                                             ... fill oval
-            parameters.frame_colours(i_frame,:),                    ... colour
+            parameters.frame_colors(i_frame,:),                     ... color
             [   position - .5 * parameters.frame_small,... rectangle
                 position + .5 * parameters.frame_small...
             ]                                                       ...
@@ -21,4 +20,4 @@ for i_frame = 1:nb_frames
 end
 
 %% Clean
-clear nb_frames i_frame position;
+clear n_frame i_frame position;

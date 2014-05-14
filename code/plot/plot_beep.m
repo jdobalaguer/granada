@@ -1,4 +1,5 @@
 
+%% beep
 if trialstruct.resp_correct
     ptb_highbeep;
 else
