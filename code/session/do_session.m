@@ -12,7 +12,7 @@ while ~index.endsession && ~index.escape
     % set bonus
     set_bonus;
     % do bonus
-    do_bonus;
+    %do_bonus;
     
     %% END OF SESSION
     set_endofsession;
