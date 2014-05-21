@@ -33,6 +33,10 @@ end
 %% no response
 resp_none;
 
+%% Wait (trial)
+while GetSecs < ptb.screen_time_next
+end
+
 %% Time
 ptb.screen_time_this = GetSecs;
 ptb.screen_time_next = ptb.screen_time_this + parameters.time_feedback;

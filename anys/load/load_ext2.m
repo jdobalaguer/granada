@@ -1,5 +1,5 @@
 
-function alldata = load_fixed(path)
+function alldata = load_fixed2(path)
     if ~exist('path','var'); path = 'data'; end
     alldata = load_data(path);
     
@@ -22,4 +22,7 @@ function alldata = load_fixed(path)
     % set start stop
     alldata.exp_first = (alldata.exp_trial   == 1);
     alldata.exp_last  = (alldata.vb_tdisance == 1);
+    
+    % sort
+    alldata = struct_sort(alldata);
 end

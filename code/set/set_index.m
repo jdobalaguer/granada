@@ -25,5 +25,8 @@ index.escape     = 0;
 index.gs_trigger = nan;
 
 % bonus
-index.bonus = [];
-index.lottery = [];
+index.bonus    = [];
+index.gs_bonus = [];
+
+index.lottery    = [];
+index.gs_lottery = [];

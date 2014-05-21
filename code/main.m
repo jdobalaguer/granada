@@ -1,6 +1,10 @@
 %{
     notes:
       requires PsychToolbox (http://psychtoolbox.org/HomePage)
+
+    ADD WAIT IN screen_trial
+    PARAMETERS.TIME_TRIAL =  2.0;
+
 %}
 
 clear all;
@@ -9,6 +13,7 @@ clear all;
 set_parameters;
 set_index;
 set_participant;
+set_keys;
 
 %% EXPERIMENT
 try
