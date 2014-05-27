@@ -1,27 +1,30 @@
 
 
-function data = load_ext3(path)
+function data = load_data_ext(varargin)
     %% warnings
     %#ok<*BDSCI>
     
     %% load
-    if ~exist('path','var'); path = 'scanner'; end
-    sub   = load_sub(  path);
-    data  = load_data( path);
-    index = load_index(path);
+    sub   = load_sub( varargin{:});
+    data  = load_data(varargin{:});
+    %index = load_index(path);
     
     %% extend
     
     % subject
     data = ext_sex(data,sub);   ... sex
-    
+
+    % timing
+    data = ext_onset(data);     ... scanner onset
+
     % index
     data = ext_index(data);     ... index
     data = ext_start(data);     ... start
     
     % value
     data = ext_valcum(data);    ... accumulated value
-    data = ext_valcum(data);    ... accumulated value
+    data = ext_valast(data);    ... last values
+    data = ext_vanext(data);    ... next values
     
     % distance
     data = ext_samprob(data);   ... EV std/var
@@ -31,6 +34,9 @@ function data = load_ext3(path)
     % ... blocked length
     % ... blocked mean(resp_gamble)
     % ... blocked mean(resp_value)
+    
+    % response
+    data = ext_galast(data);
     
     %% sort
     data = struct_sort(data);

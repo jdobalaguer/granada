@@ -1,6 +1,6 @@
 
 function alldata = load_data(path)
-    if ~exist('path','var'); path = 'data'; end
+    if ~exist('path','var'); path = 'scanner'; end
     path_dir = ['data',filesep(),path,filesep()];
     assert(logical(exist(path_dir,'dir')),sprintf('load_data: directory "%s" does not exist',path_dir));
     d = dir([path_dir,'data_*.mat']);

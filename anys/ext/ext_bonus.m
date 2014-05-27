@@ -14,9 +14,10 @@ function data = ext_bonus(data)
     data.resp_bonus_last = nan(1,nb_total);
     for i = 1:nb_total
         data.resp_bonus_mean(i) = mean(bonus);
-        if data.exp_index(i) == 1
+        data.resp_bonus_std( i) = mean(bonus);
+        if data.exp_start(i)
             bonus = [];
-        elseif data.exp_last(i) == 1
+        elseif data.exp_last(i)
             ii_sub     = (data.exp_subject == data.exp_subject(i));
             ii_session = (data.exp_session == data.exp_session(i));
             ii_frame   = (data.vb_frame    == data.vb_frame(i));

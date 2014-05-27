@@ -1,13 +1,17 @@
 
-function alldata = ext_start(alldata)
+function data = ext_start(data)
     %% numbers
-    nb_total   = length(alldata.exp_subject);
-    nb_subject = length(unique(alldata.exp_subject));
+    nb_total   = length(data.exp_subject);
+    nb_subject = length(unique(data.exp_subject));
     nb_index   = nb_total ./ nb_subject;
-    nb_trial   = length(unique(alldata.exp_trial));
+    nb_trial   = length(unique(data.exp_trial));
     
-    %% set first/last trials
-    alldata.exp_first = double(alldata.exp_trial   == 1);
-    alldata.exp_last  = double(alldata.vb_distoend == 1);
+    %% block
+    data.exp_start = double(data.exp_trial   == 1);
+    data.exp_end   = double(data.exp_trial   == nb_trial);
+    
+    %% frame
+    data.exp_last  = double(data.vb_distoend == 1);
+    data.exp_first = double([1, data.exp_last(1:end-1)]);
     
 end

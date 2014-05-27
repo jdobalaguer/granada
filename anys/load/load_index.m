@@ -1,6 +1,6 @@
 
 function alldata = load_index(path)
-    if ~exist('path','var'); path = 'data'; end
+    if ~exist('path','var'); path = 'scanner'; end
     path_dir = ['data',filesep(),path,filesep()];
     d = dir([path_dir,'data_*_5.mat']);
     d = strcat(path_dir,cell2mat({d(:).name}'));
