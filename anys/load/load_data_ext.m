@@ -21,13 +21,15 @@ function data = load_data_ext(varargin)
     data = ext_index(data);     ... index
     data = ext_start(data);     ... start
     
+    % distance
+    data = ext_samprob(data);   ... EV std/var
+    data = ext_distery(data);   ... distance to lottery
+    
     % value
     data = ext_valcum(data);    ... accumulated value
     data = ext_valast(data);    ... last values
     data = ext_vanext(data);    ... next values
-    
-    % distance
-    data = ext_samprob(data);   ... EV std/var
+    data = ext_values(data);    ... unexpected value (& others)
     
     % block
     %data = ext_bonus(data,index); ... bonus

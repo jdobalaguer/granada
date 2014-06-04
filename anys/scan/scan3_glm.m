@@ -4,6 +4,7 @@ function scan3_glm()
     %% WARNINGS
     %#ok<*SETNU>
     %#ok<*AGROW>
+    %#ok<*NBRAK>
 
     %% GENERAL SETTINGS    
     % DIRECTORIES AND FILES
@@ -14,7 +15,7 @@ function scan3_glm()
     dir_niiepis3                   = strcat(dir_niisubs,'epi3',filesep);
     % data
     dir_datsubs                    = [pwd(),filesep,'data',filesep,'data',filesep,'scanner',filesep];
-    dir_glm                        = [pwd(),filesep,'data',filesep,'glm3',filesep,'glm',filesep];
+    dir_glm                        = [pwd(),filesep,'data',filesep,'glm3',filesep,'glm_TESUZRBP',filesep];
     dir_datcons                    = [dir_glm,'conditions',filesep];
     dir_datglm1s                   = [dir_glm,'firstlevel',filesep];
     dir_datglm2s                   = [dir_glm,'secondlevel',filesep];
@@ -24,14 +25,20 @@ function scan3_glm()
     
     % VARIABLES
     nb_subjects = size(dir_niisubs, 1);
-    n_subject   = [1,2,3,5,16,20];
+    n_subject   = [1,2,3];
     u_subject   = set_subjects();
     
     u_contrast  = { ...
-                    struct('name','t','convec',[1]) ...
-                    struct('name','t','convec',[0,1]) ...
+                    struct('name','t', 'convec',[ 1, 0, 0, 0, 0, 0, 0, 0]) ...
+                    struct('name','e', 'convec',[ 0, 1, 0, 0, 0, 0, 0, 0]) ...
+                    struct('name','s', 'convec',[ 0, 0, 1, 0, 0, 0, 0, 0]) ...
+                    struct('name','u', 'convec',[ 0, 0, 0, 1, 0, 0, 0, 0]) ...
+                    struct('name','z', 'convec',[ 0, 0, 0, 0, 1, 0, 0, 0]) ...
+                    struct('name','r', 'convec',[ 0, 0, 0, 0, 0, 1, 0, 0]) ...
+                    struct('name','b', 'convec',[ 0, 0, 0, 0, 0, 0, 1, 0]) ...
+                    struct('name','p', 'convec',[ 0, 0, 0, 0, 0, 0, 0, 1]) ...
                   };
-              
+
 %     u_contrast  = { ...
 %                     struct('name','kt','convec',[ 1, 1, 1, 1, 1, 1, 0, 0, 0]) ...
 %                     struct('name','kb','convec',[ 0, 0, 0, 0, 0, 0, 1, 1, 0]) ...
@@ -115,6 +122,7 @@ function scan3_glm()
                 ii_run = (data.exp_session == u_run(i_run));
                 ii     = (ii_sub & ii_run);
                 z_exv       = + data.vb_exv(ii); ... add subjective value
+                z_uxv       = + data.resp_uxv(ii);
                 z_wins      = + data.vb_wins(ii);
                 z_loss      = - data.vb_loss(ii);
                 z_prob      = + data.vb_prob(ii);
@@ -123,24 +131,25 @@ function scan3_glm()
                 z_valcum    = + data.resp_valcum(ii);
                 z_distance  = 1 ./ data.vb_distance(ii);
                 z_gamble    = bin2sign(data.resp_gamble(ii)); z_gamble(isnan(z_gamble)) = 0;
-                z_right     = bin2sign(data.exp_subject(ii)) .* bin2sign(data.resp_gamble(ii)); z_right(isnan(z_right)) = 0;
+                z_right     = bin2sign(mod(data.exp_subject(ii),2)) .* bin2sign(data.resp_gamble(ii)); z_right(isnan(z_right)) = 0;
+                z_distery   = 1 ./ data.vb_distery(ii);
                 
                 name     = 'TRIAL';
                 onset    = data.vb_onset(ii);
-                subnames = {'R'};       %{'E','V','W','U','R'};
-                levels   = {z_right};   %{z_exv,z_value,z_valcum,z_distance,z_gamble};
+                subnames = {'E','S','U','Z','R'};
+                levels   = {z_exv,z_uxv,z_distance,z_distery,z_right};
                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
-                                 
-%                 % CREATE BONUS CONDITIONS
-%                 ii_sub    = (index.sub_bonus == sub);
-%                 ii_run    = (index.ses_bonus == u_run(i_run));
-%                 ii        = (ii_sub & ii_run);
-%                 name     = 'BONUS';
-%                 onset    = index.ons_bonus(ii);
-%                 subnames = {'B'};
-%                 levels   = {index.bonus(ii)};
-%                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
-%                 
+                
+                % CREATE BONUS CONDITIONS
+                ii_sub    = (index.sub_bonus == sub);
+                ii_run    = (index.ses_bonus == u_run(i_run));
+                ii        = (ii_sub & ii_run);
+                name     = 'BONUS';
+                onset    = index.ons_bonus(ii);
+                subnames = {'P'};
+                levels   = {index.bonus(ii)};
+                cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
+                
 %                 % CREATE LOTTERY CONDITIONS
 %                 ii_sub    = (index.sub_lottery == sub);
 %                 ii_run    = (index.ses_lottery == u_run(i_run));
@@ -186,6 +195,8 @@ function scan3_glm()
             job.spm.stats.fmri_spec.timing.RT      = pars_tr;
             job.spm.stats.fmri_spec.timing.fmri_t  = 16;
             job.spm.stats.fmri_spec.timing.fmri_t0 = 1;
+            % remove run
+            remove_run = [];
             % session
             for i_run = u_run
                 % index
@@ -216,7 +227,11 @@ function scan3_glm()
                 for i_cond1 = 1:length(loadcond.cond)
                     % remove onsets out of boundary
                     nb_rmons = sum(loadcond.cond{i_cond1}.onset/pars_tr > nb_min);
-                    if nb_rmons; fprintf('    warning: (%02i,%02i,%02i) delete %02i onsets %s \n',i_sub,i_run,i_cond1,nb_rmons,loadcond.cond{i_cond1}.name); end
+                    if nb_rmons
+                        fprintf('    warning: (%02i,%02i,%02i) delete %02i onsets %s \n',i_sub,i_run,i_cond1,nb_rmons,loadcond.cond{i_cond1}.name);
+                        fprintf('    warning: delete run %02i \n',i_run);
+                        remove_run(end+1) = i_run;
+                    end
                     loadcond.cond{i_cond1}.onset(loadcond.cond{i_cond1}.onset/pars_tr > nb_min) = [];
                     % save condition
                     cond = struct();
@@ -242,6 +257,12 @@ function scan3_glm()
             job.spm.stats.fmri_spec.global = 'None';
             job.spm.stats.fmri_spec.mask = {''};
             job.spm.stats.fmri_spec.cvi = 'AR(1)';
+            % remove run
+            if ~isempty(remove_run)
+                remove_run = unique(remove_run);
+                job.spm.stats.fmri_spec.sess(remove_run) = [];
+            end
+            % add job
             jobs{end+1} = job;
         end
         spm_jobman('run',jobs);

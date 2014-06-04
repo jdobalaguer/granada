@@ -22,10 +22,10 @@ function scan_clean()
     %% JOBS
     clean_dcm();                                % clean dicom
     %clean_str();                                % clean structural
-    clean_epi4();                               % clean epi4
+    %clean_epi4();                               % clean epi4
     %clean_epi3_img();                           % clean epi3 image
-    %clean_epi3_rea();                           % clean epi3 realignment
-    %clean_epi3_nor();                           % clean epi3 normalisation
+    clean_epi3_rea();                           % clean epi3 realignment
+    clean_epi3_nor();                           % clean epi3 normalisation
     %clean_epi3_smt();                           % clean epi3 smooth
 
     %% CLEAN FILES
