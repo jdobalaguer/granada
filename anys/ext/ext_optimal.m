@@ -1,12 +1,12 @@
 
-function data = ext_samprob(data)
+function data = ext_optimal(data)
     %% numbers
     nb_total   = length(data.exp_subject);
     nb_subject = length(unique(data.exp_subject));
     nb_index   = nb_total ./ nb_subject;
     nb_trial   = length(unique(data.exp_trial));
     
-    %% blocked variance / standard deviation
+    %% mean / variance / standard deviation
     data.vb_exv    = nan(1,nb_total);
     data.vb_var    = nan(1,nb_total);
     for i = 1:nb_total
@@ -19,4 +19,8 @@ function data = ext_samprob(data)
         data.vb_var(i) = va;
     end
     data.vb_std = sqrt(data.vb_var);
+    
+    %% difficulty
+    data.vb_exh = abs(data.vb_exv - 0.10);
+    
 end

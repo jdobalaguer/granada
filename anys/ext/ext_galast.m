@@ -6,7 +6,7 @@ function data = ext_galast(data)
     nb_index   = nb_total ./ nb_subject;
     nb_trial   = length(unique(data.exp_trial));
     
-    %% last value
+    %% last actions
     data.resp_galast1 = [zeros(1,1), data.resp_gamble(1:end-1)];
     data.resp_galast2 = [zeros(1,2), data.resp_gamble(1:end-2)];
     data.resp_galast3 = [zeros(1,3), data.resp_gamble(1:end-3)];

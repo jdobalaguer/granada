@@ -114,8 +114,9 @@ fig_export('docs/glm_gamble.pdf')
 for i_reg = 1:size(B,2)
     text = sprintf('ttest(%s) : ',l{i_reg});
     text(end+1:20) = ' ';
-    if ttest(B(:,i_reg)) cprintf([1,0,0],text);
-    else                 fprintf(text);
+    [h,p,c,s] = ttest(B(:,i_reg),0,'alpha',0.1);
+    if h,   cprintf([1,0,0],text);
+    else    fprintf(        text);
     end
     jb_ttest(B(:,i_reg));
 end

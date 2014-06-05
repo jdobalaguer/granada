@@ -1,5 +1,17 @@
 
 function index = load_index_ext(varargin)
+    %% preload
+    if ~isempty(varargin)
+        path     = varargin{1};
+        path_dir = ['data',filesep(),path,filesep()];
+        path_fil = [path_dir,'000_ext.mat'];
+        if exist(path_fil,'file') && ~isempty(who('-file',path_fil,'index'))
+            loadfile = load(path_fil);
+            index = loadfile.index;
+            return;
+        end
+    end
+    
     %% load
     data  = load_data( varargin{:});
     index = load_index(varargin{:});
@@ -60,5 +72,12 @@ function index = load_index_ext(varargin)
 
     %% sort
     index = struct_sort(index);
+    
+    %% save
+    if exist(path_fil,'file')
+        save(path_fil,'-append','index');
+    else
+        save(path_fil,'index');
+    end
     
 end

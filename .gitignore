@@ -1,7 +1,11 @@
 .DS_Store
+
 *~
 *.mat
 *.nii
+*.hdr
+*.img
+
 backups
 tmp*
 data/dcm
