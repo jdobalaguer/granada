@@ -38,6 +38,7 @@ function data = load_data_ext(varargin)
 
     % distance
     data = ext_distery(data);   ... distance to lottery
+    data = ext_distexp(data);   ... distance to end of experiment
     
     % value
     data = ext_valcum(data);    ... accumulated value

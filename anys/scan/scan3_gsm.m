@@ -17,7 +17,7 @@ function scan3_gsm()
     dir_niiepis3                   = strcat(dir_niisubs,'epi3',filesep);
     % data
     dir_datsubs                    = [pwd(),filesep,'data',filesep,'data',filesep,'scanner',filesep];
-    dir_gsm                        = [pwd(),filesep,'data',filesep,'gsm3',filesep,'TRV_BP_L',filesep];
+    dir_gsm                        = [pwd(),filesep,'data',filesep,'gsm3',filesep,'TRUZF_BP_LO',filesep];
     dir_datcons                    = [dir_gsm,'conditions',filesep];
     dir_datgsm1s                   = [dir_gsm,'firstlevel',filesep];
     dir_datgsm2s                   = [dir_gsm,'secondlevel',filesep];
@@ -33,12 +33,15 @@ function scan3_gsm()
     u_subject   = set_subjects();
     
     u_contrast  = { ...
-                    struct('name','t', 'convec',[ 1, 0, 0, 0, 0, 0]) ...
-                    struct('name','r', 'convec',[ 0, 1, 0, 0, 0, 0]) ...
-                    struct('name','v', 'convec',[ 0, 0, 1, 0, 0, 0]) ...
-                    struct('name','b', 'convec',[ 0, 0, 0, 1, 0, 0]) ...
-                    struct('name','p', 'convec',[ 0, 0, 0, 0, 1, 0]) ...
-                    struct('name','l', 'convec',[ 0, 0, 0, 0, 0, 1]) ...
+                    struct('name','t', 'convec',[ 1, 0, 0, 0, 0, 0, 0, 0, 0]) ...
+                    struct('name','r', 'convec',[ 0, 1, 0, 0, 0, 0, 0, 0, 0]) ...
+                    struct('name','u', 'convec',[ 0, 0, 1, 0, 0, 0, 0, 0, 0]) ...
+                    struct('name','z', 'convec',[ 0, 0, 0, 1, 0, 0, 0, 0, 0]) ...
+                    struct('name','f', 'convec',[ 0, 0, 0, 0, 1, 0, 0, 0, 0]) ...
+                    struct('name','b', 'convec',[ 0, 0, 0, 0, 0, 1, 0, 0, 0]) ...
+                    struct('name','p', 'convec',[ 0, 0, 0, 0, 0, 0, 1, 0, 0]) ...
+                    struct('name','l', 'convec',[ 0, 0, 0, 0, 0, 0, 0, 1, 0]) ...
+                    struct('name','o', 'convec',[ 0, 0, 0, 0, 0, 0, 0, 0, 1]) ...
                   };
               
     % PARAMETERS
@@ -127,6 +130,7 @@ function scan3_gsm()
                 % distances
                 z_distance  = 1 ./ data.vb_distance(ii);    ... inv(bonus distance)
                 z_distery   = 1 ./ data.vb_distery(ii);     ... inv(lottery distance)
+                z_distexp   = 1 ./ data.vb_distexp(ii);     ... inv(expend distance)
                 
                 %{
                     TRIAL REGRESSORS
@@ -150,6 +154,7 @@ function scan3_gsm()
                 
                     U -- distance bonus         ... distance
                     Z -- distance lottery
+                    F -- distance expend
 
                     BONUS REGRESSORS
                     B -- onset bonus
@@ -157,12 +162,13 @@ function scan3_gsm()
 
                     LOTTERY REGRESSORS
                     L -- onset lottery
+                    O -- outcome lottery
                 %}
                 
                 name     = 'T';
                 onset    = data.vb_onset(ii);
-                subnames = {'R','V'};
-                levels   = {z_right,z_value};
+                subnames = {'R','U','Z','F'};
+                levels   = {z_right,z_distance,z_distery,z_distexp};
                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
                 
                 % CREATE BONUS CONDITIONS
@@ -181,8 +187,8 @@ function scan3_gsm()
                 ii        = (ii_sub & ii_run);
                 name     = 'L';
                 onset    = index.ons_lottery(ii);
-                subnames = {};
-                levels   = {};
+                subnames = {'O'};
+                levels   = {index.lottery(ii)};
                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
                 
                 % load realignment
