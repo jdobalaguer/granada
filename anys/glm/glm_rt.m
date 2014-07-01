@@ -7,7 +7,7 @@
 clear all;
 
 %% load data
-data = load_ext3('scanner');
+data = load_data_ext('scanner');
 data.vb_wev = data.vb_exv + data.vb_std;
 data.vb_lev = data.vb_exv - data.vb_std;
 

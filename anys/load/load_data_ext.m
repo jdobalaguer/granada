@@ -32,11 +32,16 @@ function data = load_data_ext(varargin)
     % timing
     data = ext_onset(data);     ... scanner onset
 
+    % block
+    data = ext_framelngth(data);... frame length
+    data = ext_framebonus(data);... frame bonus
+    
     % index
     data = ext_index(data);     ... index
     data = ext_start(data);     ... start
 
     % distance
+    data = ext_distart(data);   ... distance from start
     data = ext_distery(data);   ... distance to lottery
     data = ext_distexp(data);   ... distance to end of experiment
     
@@ -44,6 +49,7 @@ function data = load_data_ext(varargin)
     data = ext_valcum(data);    ... accumulated value
     data = ext_valast(data);    ... last values
     data = ext_vanext(data);    ... next values
+    
     
     % block
     %data = ext_bonus(data,index); ... bonus

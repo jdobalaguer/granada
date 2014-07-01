@@ -17,7 +17,7 @@ function scan3_gsm()
     dir_niiepis3                   = strcat(dir_niisubs,'epi3',filesep);
     % data
     dir_datsubs                    = [pwd(),filesep,'data',filesep,'data',filesep,'scanner',filesep];
-    dir_gsm                        = [pwd(),filesep,'data',filesep,'gsm3',filesep,'TRUZF_BP_LO',filesep];
+    dir_gsm                        = [pwd(),filesep,'data',filesep,'gsm3',filesep,'TSI_CGV_B_L_2',filesep];
     dir_datcons                    = [dir_gsm,'conditions',filesep];
     dir_datgsm1s                   = [dir_gsm,'firstlevel',filesep];
     dir_datgsm2s                   = [dir_gsm,'secondlevel',filesep];
@@ -33,15 +33,17 @@ function scan3_gsm()
     u_subject   = set_subjects();
     
     u_contrast  = { ...
-                    struct('name','t', 'convec',[ 1, 0, 0, 0, 0, 0, 0, 0, 0]) ...
-                    struct('name','r', 'convec',[ 0, 1, 0, 0, 0, 0, 0, 0, 0]) ...
-                    struct('name','u', 'convec',[ 0, 0, 1, 0, 0, 0, 0, 0, 0]) ...
-                    struct('name','z', 'convec',[ 0, 0, 0, 1, 0, 0, 0, 0, 0]) ...
-                    struct('name','f', 'convec',[ 0, 0, 0, 0, 1, 0, 0, 0, 0]) ...
-                    struct('name','b', 'convec',[ 0, 0, 0, 0, 0, 1, 0, 0, 0]) ...
-                    struct('name','p', 'convec',[ 0, 0, 0, 0, 0, 0, 1, 0, 0]) ...
-                    struct('name','l', 'convec',[ 0, 0, 0, 0, 0, 0, 0, 1, 0]) ...
-                    struct('name','o', 'convec',[ 0, 0, 0, 0, 0, 0, 0, 0, 1]) ...
+                    struct('name','t', 'convec',[ 1, 0, 0, 0, 0, 0, 0, 0]) ...
+                    struct('name','s', 'convec',[ 0, 1, 0, 0, 0, 0, 0, 0]) ...
+                    struct('name','i', 'convec',[ 0, 0, 1, 0, 0, 0, 0, 0]) ...
+                    ...
+                    struct('name','c', 'convec',[ 0, 0, 0, 1, 0, 0, 0, 0]) ...
+                    struct('name','g', 'convec',[ 0, 0, 0, 0, 0, 0, 1, 0]) ...
+                    struct('name','v', 'convec',[ 0, 0, 0, 0, 1, 0, 0, 0]) ...
+                    ...
+                    struct('name','b', 'convec',[ 0, 0, 0, 0, 0, 1, 0, 0]) ...
+                    ...
+                    struct('name','l', 'convec',[ 0, 0, 0, 0, 0, 0, 0, 1]) ...
                   };
               
     % PARAMETERS
@@ -49,7 +51,7 @@ function scan3_gsm()
     pars_voxs    = 4;
     
     % FLAGS
-    do_all  = true;
+    do_all  = false;
     do_regs = do_all || ~exist(dir_datcons ,'file');
     do_frst = do_all || ~exist(dir_datgsm1s,'file');
     do_scnd = do_all || true;
@@ -108,77 +110,101 @@ function scan3_gsm()
                 cond = {};
                 
                 % CREATE TRIAL CONDITIONS
-                ii_sub = (data.exp_subject == sub);
-                ii_run = (data.exp_session == u_run(i_run));
-                ii     = (ii_sub & ii_run);
                 % task
-                z_wins      = + data.vb_wins(ii);           ... wins
-                z_loss      = - data.vb_loss(ii);           ... loss
-                z_prob      = + data.vb_prob(ii);           ... prob
+                z_wins      = + data.vb_wins;           ... wins
+                z_loss      = - data.vb_loss;           ... loss
+                z_prob      = + data.vb_prob;           ... prob
                 % actions
-                z_gamble    = + data.resp_signed_gamble(ii);... gamble
-                z_right     = + data.resp_signed_right(ii); ... right
-                z_value     = + data.resp_value(ii);        ... outcome
-                z_valcum    = + data.resp_valcum(ii);       ... cumulative outcome
+                z_gamble    = + data.resp_signed_gamble;... gamble
+                z_right     = + data.resp_signed_right; ... right
+                z_value     = + data.resp_value;        ... outcome
+                z_valcum    = + data.resp_valcum;       ... cumulative outcome
                 % optimal
-                z_exv       = + data.vb_exv(ii);            ... expected  values
-                z_std       = + data.vb_std(ii);            ... standard deviation
-                z_exh       = + data.vb_exh(ii);            ... optimal difficulty
+                z_exv       = + data.vb_exv;            ... expected  values
+                z_std       = + data.vb_std;            ... standard deviation
+                z_exh       = + data.vb_exh;            ... optimal difficulty
                 % heuristic
-                z_sxv       = + data.vb_sxv(ii);            ... subjetive values
-                z_sxh       = + data.vb_sxh(ii);            ... subjective difficulty
+                z_sxv       = + data.vb_sxv;            ... subjetive values
+                z_sxh       = + data.vb_sxh;            ... subjective difficulty
                 % distances
-                z_distance  = 1 ./ data.vb_distance(ii);    ... inv(bonus distance)
-                z_distery   = 1 ./ data.vb_distery(ii);     ... inv(lottery distance)
-                z_distexp   = 1 ./ data.vb_distexp(ii);     ... inv(expend distance)
+                z_distance  = 1 ./ data.vb_distance;    ... inv(bonus distance)
+                z_distery   = 1 ./ data.vb_distery;     ... inv(lottery distance)
+                z_distexp   = 1 ./ data.vb_distexp;     ... inv(expend distance)
+                z_distart   = 1 ./ data.vb_distart;     ... inv(last bonus distance)
+                % frame
+                z_length    = 1 ./ data.vb_framelngth;  ... inv(frame length)
+                z_bonus     = + data.vb_framebonus;     ... frame bonus
                 
                 %{
-                    TRIAL REGRESSORS
-                    T -- onset trial            ... onset
-                
-                    X -- wins                   ... task
-                    N -- loss
-                    P -- prob
-                
-                    G -- gamble action          ... actions
-                    R -- right action
-                    V -- outcome
-                    W -- cumulative reward
-                
-                    E -- expected value         ... optimal
-                    S -- standard deviation
-                    # -- optimal difficulty
-                
-                    A -- subjective value       ... subjective
-                    H -- subjective difficulty
-                
-                    U -- distance bonus         ... distance
-                    Z -- distance lottery
-                    F -- distance expend
+                TRIAL REGRESSORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                T -- onset trial            ... onset
 
-                    BONUS REGRESSORS
-                    B -- onset bonus
-                    P -- outcome bonus
+                X -- wins                   ... task
+                N -- loss
+                P -- prob
 
-                    LOTTERY REGRESSORS
-                    L -- onset lottery
-                    O -- outcome lottery
+                E -- expected value         ... optimal
+                S -- standard deviation
+                # -- optimal difficulty
+
+                A -- subjective value       ... subjective
+                H -- subjective difficulty
+
+                U -- distance bonus         ... distance
+                Z -- distance lottery
+                F -- distance expend
+                K -- distance start
+
+                I -- frame length           ... frame
+                J -- frame bonus
+
+                RESPONSE REGRESSORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                C -- onset response         ... onset
+
+                G -- gamble action          ... actions
+                R -- right action
+
+                V -- outcome                ... feedback
+                W -- cumulative reward
+
+                BONUS REGRESSORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                B -- onset bonus
+                P -- outcome bonus
+
+                LOTTERY REGRESSORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                L -- onset lottery
+                O -- outcome lottery
                 %}
                 
+                % CREATE TRIAL CONDITIONS
+                ii_sub   = (data.exp_subject == sub);
+                ii_run   = (data.exp_session == u_run(i_run));
+                ii       = (ii_sub & ii_run);
                 name     = 'T';
                 onset    = data.vb_onset(ii);
-                subnames = {'R','U','Z','F'};
-                levels   = {z_right,z_distance,z_distery,z_distexp};
+                subnames = {'S','I'};
+                levels   = {z_sxv(ii),z_length(ii)};
+                cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
+                
+                % CREATE RESPONSE CONDITIONS
+                ii_sub   = (data.exp_subject == sub);
+                ii_run   = (data.exp_session == u_run(i_run));
+                ii_resp  = ~isnan(data.resp_gamble);
+                ii       = (ii_sub & ii_run & ii_resp);
+                name     = 'C';
+                onset    = data.resp_onset(ii);
+                subnames = {'G','V'};
+                levels   = {z_gamble(ii),z_value(ii)};
                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
                 
                 % CREATE BONUS CONDITIONS
-                ii_sub    = (index.sub_bonus == sub);
-                ii_run    = (index.ses_bonus == u_run(i_run));
-                ii        = (ii_sub & ii_run);
+                ii_sub   = (index.sub_bonus == sub);
+                ii_run   = (index.ses_bonus == u_run(i_run));
+                ii       = (ii_sub & ii_run);
                 name     = 'B';
                 onset    = index.ons_bonus(ii);
-                subnames = {'P'};
-                levels   = {index.bonus(ii)};
+                subnames = {};
+                levels   = {};
                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
                 
                 % CREATE LOTTERY CONDITIONS
@@ -187,8 +213,8 @@ function scan3_gsm()
                 ii        = (ii_sub & ii_run);
                 name     = 'L';
                 onset    = index.ons_lottery(ii);
-                subnames = {'O'};
-                levels   = {index.lottery(ii)};
+                subnames = {};
+                levels   = {};
                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
                 
                 % load realignment
@@ -318,7 +344,6 @@ function scan3_gsm()
             % add job
             jobs{end+1} = job;
         end
-        save jobs jobs
         spm_jobman('run',jobs);
     end
     
