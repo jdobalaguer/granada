@@ -6,6 +6,7 @@ function scan3_preprocess()
     %#ok<*AGROW>
     %#ok<*DEFNU>
     %#ok<*FPARK>
+    %#ok<*NBRAK>
 
     %% GENERAL SETTINGS    
     % DIRECTORIES AND FILES
@@ -14,15 +15,13 @@ function scan3_preprocess()
     dir_subs                    = dir([dir_study,'sub_*']); dir_subs = strcat(dir_study,strvcat(dir_subs.name),'/');
     dir_strs                    = strcat(dir_subs,'str',filesep);
     dir_epis3                   = strcat(dir_subs,'epi3',filesep);
-    dir_epis4                   = strcat(dir_subs,'epi4',filesep);
-    expand(); % expand 4D nii to 3D nii
     file_T1                     = [dir_spm,'templates/T1.nii,1'];
     
     % PARAMETERS
     pars_nslices = 32;
     pars_tr      = 2;
     pars_refsl   = ceil(.5*pars_nslices);
-    pars_ordsl   = [2:2:pars_nslices,1:2:pars_nslices];
+    pars_ordsl   = [pars_nslices:-1:+1];
     pars_voxs    = 4;
     
     % VARIABLES
@@ -32,37 +31,24 @@ function scan3_preprocess()
     %% JOBS
     tic();
     spm_jobman('initcfg');
-    realignment();                          % realign (estimate)
-    realign_unwarp();                       % realign (unwarp)
-    realign_move();                         % realign (move)
-    coregistration_str_meanepi()            % coregistration (anatomical T1 to mean EPI)
-    normalisation_str_mni();                % normalisation  (estimate: anatomical T1 to MNI template)
-    normalisation_epi_mni();                % normalisation  (write:    EPI to MNI template)
-    normalisation_move();                   % normalisation  (move files)
-    smoothing();                            % smooth
-    smooth_move();                          % smooth         (move files)
+%     despike();                      % despike
+%     despike_move();                 % despike           (move)
+    image_compression();            % image             (compression)
+%     slicetiming();                  % slice timing
+%     slicetiming_move();             % slice timing      (move)
+    despike_compression();          % despike           (compression)
+%     realignment_unwarp();           % realignment
+%     realignment_move();             % realignment       (move)
+    slice_timing_compression();     % slice timing      (compression)
+%     coregistration_str_meanepi()    % coregistration    (anatomical T1 to mean EPI)
+%     normalisation_str_mni();        % normalisation     (anatomical T1 to MNI template)
+%     normalisation_epi_mni();        % normalisation     (EPI to MNI template)
+%     normalisation_move();           % normalisation     (move files)
+    realignment_compression();      % realignment       (compression)
+%     smoothing();                    % smoothing
+%     smoothing_move();               % smoothing         (move files)
+    normalisation_compression();    % normalisation     (compression)
     toc();
-    
-    %% EXPAND: nii4 to nii3
-    function expand()
-        for i_sub = 1:size(dir_subs, 1); 
-            dir_sub  = strtrim(dir_subs(i_sub,:));
-            dir_epi3 = strtrim(dir_epis3(i_sub,:));
-            dir_epi4 = strtrim(dir_epis4(i_sub,:));
-            file_epis4 = dir([dir_epi4,'images*.nii']);
-            fprintf('Expand for:                      %s\n',dir_sub);
-            for i_run = 1:length(file_epis4)
-                dir_run   = sprintf('%srun%d/',dir_epi3,i_run);
-                mkdirp(dir_run);
-                dir_img   = strcat(dir_run,'images',filesep);
-                mkdirp(dir_img);
-                file_epi4 = strcat(dir_epi4,file_epis4(i_run).name);
-                if isempty(dir([dir_img,'images*.nii']))
-                    spm_file_split(file_epi4,dir_img);
-                end
-            end
-        end
-    end
     
     %% SET SUBJECTS
     function u_subject = set_subjects()
@@ -78,7 +64,7 @@ function scan3_preprocess()
             for i_run = u_run
                 dir_run = strcat(dir_epi3,strtrim(dir_runs(i_run,:)));
                 dir_smt = strcat(dir_run,'smooth',filesep);
-                if ~exist(dir_smt,'dir') || isempty(dir(sprintf('%ssw%duimages*.nii',dir_smt,pars_voxs)))
+                if ~exist(dir_smt,'dir') || isempty(dir(sprintf('%ssw%duagimages*.nii',dir_smt,pars_voxs)))
                     this_done = 0;
                 end
             end
@@ -87,50 +73,121 @@ function scan3_preprocess()
         u_subject = find(u_subject);
     end
 
-    %% REALIGNMENT: Estimate and Write
-    function realignment()
+    %% SPIKE CORRECTION
+    function despike()
         prefix = '';
+        for i_sub = u_subject
+            dir_sub  = strtrim(dir_subs(i_sub,:));
+            dir_epi3 = strtrim(dir_epis3(i_sub,:));
+            dir_runs    = dir([strtrim(dir_epis3(i_sub,:)),'run*']); dir_runs = strcat(strvcat(dir_runs.name),filesep);
+            nb_runs     = size(dir_runs, 1);
+            u_run       = 1:nb_runs;
+            fprintf('Spike correction for:            %s\n',dir_sub);
+            for i_run = u_run
+                dir_run = strcat(dir_epi3,strtrim(dir_runs(i_run,:)));
+                dir_img = strcat(dir_run,'images',filesep);
+                dir_spc = strcat(dir_run,'spikes',filesep);
+                if ~exist(dir_spc,'dir') || isempty(dir([dir_spc,'g',prefix,'images*.nii']))
+                    spm_select('clearvfiles');
+                    run_images = spm_select('List', dir_img, '^images.*\.nii$');
+                    filenames   = strcat(dir_img,run_images);
+                    art_slice(filenames);
+                end
+            end
+       end
+    end
+
+    %% SPIKE CORRECTION: Move files
+    function despike_move()
+        prefix = '';
+        for i_sub = u_subject
+            dir_sub  = strtrim(dir_subs(i_sub,:));
+            dir_epi3 = strtrim(dir_epis3(i_sub,:));
+            dir_runs    = dir([strtrim(dir_epis3(i_sub,:)),'run*']); dir_runs = strcat(strvcat(dir_runs.name),filesep);
+            nb_runs     = size(dir_runs, 1);
+            u_run       = 1:nb_runs;
+            fprintf('Spike move files for:            %s\n',dir_sub);
+            for i_run = u_run
+                dir_run = strcat(dir_epi3,strtrim(dir_runs(i_run,:)));
+                dir_img = strcat(dir_run,'images',filesep);
+                dir_spc = strcat(dir_run,'spikes',filesep);
+                mkdirp(dir_spc);
+                if ~isempty(dir([dir_img,'g',prefix,'image*'])),    movefile([dir_img,'g',prefix,'image*'],dir_spc);    end
+                if ~isempty(dir([dir_img,'ArtifactMask.nii'] )),    movefile([dir_img,'ArtifactMask.nii' ],dir_spc);    end
+                if ~isempty(dir([dir_img,'BadSliceLog*.txt'] )),    movefile([dir_img,'BadSliceLog*.txt' ],dir_spc);    end
+            end
+       end
+    end
+    
+    %% IMAGE: Compression
+    function image_compression()
+        scan_zip('nii3img');
+    end
+
+    %% SLICE TIMING
+    function slicetiming()
+        prefix = 'g';
         jobs = {};
         for i_sub = u_subject
             dir_sub  = strtrim(dir_subs(i_sub,:));
             dir_epi3 = strtrim(dir_epis3(i_sub,:));
-            dir_runs    = dir([strtrim(dir_epis3(i_sub,:)),'run*']); dir_runs = strcat(strvcat(dir_runs.name),'/');
+            dir_runs    = dir([strtrim(dir_epis3(i_sub,:)),'run*']); dir_runs = strcat(strvcat(dir_runs.name),filesep);
             nb_runs     = size(dir_runs, 1);
             u_run       = 1:nb_runs;
-            fprintf('Realignment for:                 %s\n',dir_sub);
+            fprintf('Slice-Timing for:                %s\n',dir_sub);
             job = struct();
-            job.spm.spatial.realign.estwrite.eoptions.quality = 0.9;  % Quality (Default: 0.9)
-            job.spm.spatial.realign.estwrite.eoptions.sep = 4;        % Separation (Default: 4) 
-            job.spm.spatial.realign.estwrite.eoptions.fwhm = 5;       % Smoothing (FWHM) (Default: 5)
-            job.spm.spatial.realign.estwrite.eoptions.rtm = 0;        % Num Passes (Default: Register to mean) 
-            job.spm.spatial.realign.estwrite.eoptions.interp = 2;     % Interpolation (Default: 2nd Degree B-Spline)
-            job.spm.spatial.realign.estwrite.eoptions.wrap = [0 0 0]; % Wrapping (Default: No wrap) 
-            job.spm.spatial.realign.estwrite.eoptions.weight = '' ;   % Weighting (Default: None) (vorher {} )
-            job.spm.spatial.realign.estwrite.roptions.which = [0 1];  % Resliced Images ([0 1] > Only Mean Image; Default: [2 1] > All Images + Mean Image) 
-            job.spm.spatial.realign.estwrite.roptions.interp = 4;     % Interpolation (Default: 4th Degree B-Spline) 
-            job.spm.spatial.realign.estwrite.roptions.wrap = [0 0 0]; % Wrapping (Default: No wrap) 
-            job.spm.spatial.realign.estwrite.roptions.mask = 1;       % Masking (Default: Mask images)
-            job.spm.spatial.realign.estwrite.roptions.prefix = 'r';   % Realigned files prefix
+            job.spm.temporal.st.nslices = pars_nslices;
+            job.spm.temporal.st.tr = pars_tr;
+            job.spm.temporal.st.ta = pars_tr - (pars_tr/pars_nslices);
+            job.spm.temporal.st.so = pars_ordsl;
+            job.spm.temporal.st.refslice = pars_refsl;
+            job.spm.temporal.st.prefix = 'a';
             for i_run = u_run
                 dir_run = strcat(dir_epi3,strtrim(dir_runs(i_run,:)));
                 dir_img = strcat(dir_run,'images',filesep);
-                dir_rea = strcat(dir_run,'realignment',filesep);
-                if ~exist(dir_rea,'dir') || isempty(dir([dir_rea,'rp_',prefix,'images*.txt']))
+                dir_spc = strcat(dir_run,'spikes',filesep);
+                dir_stc = strcat(dir_run,'slicetime',filesep);
+                if ~exist(dir_stc,'dir') || isempty(dir([dir_stc,'a',prefix,'images*.nii']))
                     spm_select('clearvfiles');
-                    raw_func_filenames{i_run}    = spm_select('List', dir_img, '^images.*\.nii$');
-                    filenames_for_realign{i_run} = strcat(dir_img,prefix,raw_func_filenames{i_run});
-                    job.spm.spatial.realign.estwrite.data{i_run} = cellstr(filenames_for_realign{i_run});
+                    raw_func_filenames{i_run} = spm_select('List', dir_img, '^images.*\.nii$');
+                    filenames_for_st{i_run}   = strcat(dir_spc,prefix,raw_func_filenames{i_run});
+                    job.spm.temporal.st.scans{i_run} = cellstr(filenames_for_st{i_run});
                 end
             end
-            if isfield(job.spm.spatial.realign.estwrite,'data'); jobs{end+1} = job; end
+            if isfield(job.spm.temporal.st,'scans'); jobs{end+1} = job; end
         end
         if ~isempty(jobs); spm_jobman('run',jobs); end
-        clear job jobs
+        clear job jobs;
     end
 
-    %% REALIGN & UNWARP
-    function realign_unwarp()
-        prefix = '';
+    %% SLICE TIMING: Move files
+    function slicetiming_move()
+        prefix = 'g';
+        for i_sub = u_subject
+            dir_sub  = strtrim(dir_subs(i_sub,:));
+            dir_epi3 = strtrim(dir_epis3(i_sub,:));
+            dir_runs    = dir([strtrim(dir_epis3(i_sub,:)),'run*']); dir_runs = strcat(strvcat(dir_runs.name),filesep);
+            nb_runs     = size(dir_runs, 1);
+            u_run       = 1:nb_runs;
+            fprintf('Slice timing move files for:     %s\n',dir_sub);
+            for i_run = u_run
+                dir_run = strcat(dir_epi3,strtrim(dir_runs(i_run,:)));
+                dir_spc = strcat(dir_run,'spikes',filesep);
+                dir_stc = strcat(dir_run,'slicetime',filesep);
+                mkdirp(dir_spc);
+                if ~isempty(dir([dir_spc,'a',prefix,'image*'])),    movefile([dir_spc,'a',prefix,'image*'],dir_stc);    end
+            end
+       end
+    end
+    
+    %% SPIKE CORRECTION: Compression
+    function despike_compression()
+        scan_zip('nii3spc');
+    end
+
+    %% REALIGN : UNWARP
+    function realignment_unwarp()
+        prefix = 'ag';
         jobs = {};
         for i_sub = u_subject
             dir_sub  = strtrim(dir_subs(i_sub,:));
@@ -165,11 +222,12 @@ function scan3_preprocess()
             for i_run = u_run
                 dir_run = strcat(dir_epi3,strtrim(dir_runs(i_run,:)));
                 dir_img = strcat(dir_run,'images',filesep);
+                dir_stc = strcat(dir_run,'slicetime',filesep);
                 dir_rea = strcat(dir_run,'realignment',filesep);
                 if ~exist(dir_rea,'dir') || isempty(dir([dir_rea,'u',prefix,'images*.nii']))
                     spm_select('clearvfiles');
                     raw_func_filenames{i_run}    = spm_select('List', dir_img, '^images.*\.nii$');
-                    filenames_for_realign{i_run} = strcat(dir_img,prefix,raw_func_filenames{i_run}); 
+                    filenames_for_realign{i_run} = strcat(dir_stc,prefix,raw_func_filenames{i_run}); 
                     job.spm.spatial.realignunwarp.data(i_run).scans = cellstr(filenames_for_realign{i_run});
                     job.spm.spatial.realignunwarp.data(i_run).pmscan = [];
                 end
@@ -181,8 +239,8 @@ function scan3_preprocess()
     end
     
     %% REALIGNMENT: Move files
-    function realign_move()
-        prefix = '';
+    function realignment_move()
+        prefix = 'ag';
         for i_sub = u_subject
             dir_sub  = strtrim(dir_subs(i_sub,:));
             dir_epi3 = strtrim(dir_epis3(i_sub,:));
@@ -192,20 +250,25 @@ function scan3_preprocess()
             fprintf('Realign move files for:          %s\n',dir_sub);
             for i_run = u_run
                 dir_run = strcat(dir_epi3,strtrim(dir_runs(i_run,:)));
-                dir_img = strcat(dir_run,'images',filesep);
+                dir_stc = strcat(dir_run,'slicetime',filesep);
                 dir_rea = strcat(dir_run,'realignment',filesep);
                 mkdirp(dir_rea);
-                if ~isempty(dir([dir_img,'u',prefix,'image*'])),    movefile([dir_img,'u',prefix,'image*'],dir_rea);   end
-                if ~isempty(dir([dir_img,'*.txt'])),                movefile([dir_img,'*.txt'],dir_rea); end
-                if ~isempty(dir([dir_img,'*.mat'])),                movefile([dir_img,'*.mat'],dir_rea); end
-                if ~isempty(dir([dir_img,'mean*'])),                movefile([dir_img,'mean*'],dir_rea); end
+                if ~isempty(dir([dir_stc,'u',prefix,'image*'])),    movefile([dir_stc,'u',prefix,'image*'],dir_rea);   end
+                if ~isempty(dir([dir_stc,'*.txt'])),                movefile([dir_stc,'*.txt'],dir_rea); end
+                if ~isempty(dir([dir_stc,'*.mat'])),                movefile([dir_stc,'*.mat'],dir_rea); end
+                if ~isempty(dir([dir_stc,'mean*'])),                movefile([dir_stc,'mean*'],dir_rea); end
             end
         end
     end
     
+    %% SLICE TIMING: Compression
+    function slice_timing_compression()
+        scan_zip('nii3stc');
+    end
+
     %% COREGISTRATION: Anatomical T1 to mean EPI
     function coregistration_str_meanepi()
-        prefix = 'u';
+        prefix = 'uag';
         jobs = {};
         for i_sub = u_subject
             dir_sub   = strtrim(dir_subs(i_sub,:));
@@ -273,7 +336,7 @@ function scan3_preprocess()
 
     %% NORMALISATION (Write EPIs)
     function normalisation_epi_mni()
-        prefix_epi = 'u';
+        prefix_epi = 'uag';
         prefix_str = 'c';
         jobs = {};
         for i_sub = u_subject
@@ -316,7 +379,7 @@ function scan3_preprocess()
         
     %% NORMALISATION (Move files)
     function normalisation_move()
-        prefix = 'u';
+        prefix = 'uag';
         for i_sub = u_subject
             dir_sub  = strtrim(dir_subs(i_sub,:));
             dir_epi3 = strtrim(dir_epis3(i_sub,:));
@@ -334,9 +397,15 @@ function scan3_preprocess()
         end
     end
 
+    %% REALIGN: Compression
+    function realignment_compression()
+        scan_zip(0,'nii3rea'); % dont delete it!
+        scan_clean('nii3rea'); % delete nii images
+    end
+
     %% SMOOTH
     function smoothing()
-        prefix = sprintf('w%du',pars_voxs);
+        prefix = sprintf('w%duag',pars_voxs);
         jobs = {};
         for i_sub = u_subject
             dir_sub = strtrim(dir_subs(i_sub,:));
@@ -371,9 +440,9 @@ function scan3_preprocess()
         clear job jobs;
     end
 
-    %% SMOOTH (Move files)
-    function smooth_move()
-        prefix = sprintf('w%du',pars_voxs);
+    %% SMOOTH: Move files
+    function smoothing_move()
+        prefix = sprintf('w%duag',pars_voxs);
         for i_sub = u_subject
             dir_sub = strtrim(dir_subs(i_sub,:));
             dir_epi3 = strtrim(dir_epis3(i_sub,:));
@@ -390,5 +459,9 @@ function scan3_preprocess()
             end
         end
     end
-        
+    
+%% NORMALISATION: Compression
+    function normalisation_compression()
+        scan_zip('nii3nor');
+    end
 end

@@ -1,6 +1,5 @@
 
-function scan_dcm2nii(u_subject)
-    
+function scan_dcm2nii()
     %% GENERAL SETTINGS    
     % DIRECTORIES AND FILES
     dir_dcm                     = [pwd(),filesep,'data',filesep,'dcm',filesep];
@@ -15,7 +14,7 @@ function scan_dcm2nii(u_subject)
     
     %% VARIABLES
     nb_subjects = size(dir_dcm_subs, 1);
-    assert(length(u_subject) == nb_subjects, 'scan_dcm2nii: error. nb_directories different than number of participants');
+    u_subject   = 1:nb_subjects;
     
     %% CONVERT SUBJECTS
     for i_subject = 1:length(u_subject)
