@@ -22,6 +22,7 @@ function scan3_preprocess()
     pars_tr      = 2;
     pars_refsl   = ceil(.5*pars_nslices);
     pars_ordsl   = [pars_nslices:-1:+1];
+    pars_reft0   = (find(pars_ordsl==pars_refsl)-1) * (pars_tr/pars_nslices);
     pars_voxs    = 4;
     
     % VARIABLES
@@ -31,23 +32,23 @@ function scan3_preprocess()
     %% JOBS
     tic();
     spm_jobman('initcfg');
-%     despike();                      % despike
-%     despike_move();                 % despike           (move)
-    image_compression();            % image             (compression)
-%     slicetiming();                  % slice timing
-%     slicetiming_move();             % slice timing      (move)
-    despike_compression();          % despike           (compression)
-%     realignment_unwarp();           % realignment
-%     realignment_move();             % realignment       (move)
-    slice_timing_compression();     % slice timing      (compression)
-%     coregistration_str_meanepi()    % coregistration    (anatomical T1 to mean EPI)
-%     normalisation_str_mni();        % normalisation     (anatomical T1 to MNI template)
-%     normalisation_epi_mni();        % normalisation     (EPI to MNI template)
-%     normalisation_move();           % normalisation     (move files)
-    realignment_compression();      % realignment       (compression)
-%     smoothing();                    % smoothing
-%     smoothing_move();               % smoothing         (move files)
-    normalisation_compression();    % normalisation     (compression)
+    despike();                      % despike
+    despike_move();                 % despike           (move)
+%     image_compression();            % image             (compression)
+    slicetiming();                  % slice timing
+    slicetiming_move();             % slice timing      (move)
+%     despike_compression();          % despike           (compression)
+    realignment_unwarp();           % realignment
+    realignment_move();             % realignment       (move)
+%     slice_timing_compression();     % slice timing      (compression)
+    coregistration_str_meanepi()    % coregistration    (anatomical T1 to mean EPI)
+    normalisation_str_mni();        % normalisation     (anatomical T1 to MNI template)
+    normalisation_epi_mni();        % normalisation     (EPI to MNI template)
+    normalisation_move();           % normalisation     (move files)
+%     realignment_compression();      % realignment       (compression)
+    smoothing();                    % smoothing
+    smoothing_move();               % smoothing         (move files)
+%     normalisation_compression();    % normalisation     (compression)
     toc();
     
     %% SET SUBJECTS
@@ -121,7 +122,7 @@ function scan3_preprocess()
     
     %% IMAGE: Compression
     function image_compression()
-        scan_zip('nii3img');
+        scan_zip(1,'nii3img');
     end
 
     %% SLICE TIMING
@@ -182,7 +183,7 @@ function scan3_preprocess()
     
     %% SPIKE CORRECTION: Compression
     function despike_compression()
-        scan_zip('nii3spc');
+        scan_zip(1,'nii3spc');
     end
 
     %% REALIGN : UNWARP
@@ -263,7 +264,7 @@ function scan3_preprocess()
     
     %% SLICE TIMING: Compression
     function slice_timing_compression()
-        scan_zip('nii3stc');
+        scan_zip(1,'nii3stc');
     end
 
     %% COREGISTRATION: Anatomical T1 to mean EPI
@@ -462,6 +463,6 @@ function scan3_preprocess()
     
 %% NORMALISATION: Compression
     function normalisation_compression()
-        scan_zip('nii3nor');
+        scan_zip(1,'nii3nor');
     end
 end

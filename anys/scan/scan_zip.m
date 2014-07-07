@@ -14,16 +14,19 @@ function scan_zip(varargin)
     dir_niiepis4              = strcat(dir_niisubs,'epi4',filesep);
     
     %% DEFAULTS
-    flag_delete = false;
-    if isnumeric(varargin{1})
-        flag_delete = varargin{1};
-        varargin(1) = [];
-        nargin      = nargin - 1;
+    u_arg = varargin;
+    n_arg = nargin();
+    flag_delete = 1;
+    
+    if isnumeric(u_arg{1})
+        flag_delete = u_arg{1};
+        u_arg(1) = [];
+        n_arg    = n_arg - 1;
     end
     
     %% JOBS
-    for i_argin = 1:nargin
-        switch varargin{i_argin}
+    for i_arg = 1:n_arg
+        switch u_arg{i_arg}
             case 'dcm'
                 zip_dcm();
             case 'nii4'
@@ -43,7 +46,7 @@ function scan_zip(varargin)
             case 'nii3smt'
                 zip_epi3_smt();
             otherwise
-                error('scan_zip: argument "%s" not valid.',varargin{i_argin});
+                error('scan_zip: argument "%s" not valid.',u_arg{i_arg});
         end
     end
 

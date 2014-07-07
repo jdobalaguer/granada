@@ -4,82 +4,89 @@ function scan3_gsm()
     fprintf('\nmake sure you have same participants in data and nii folders!\n\n')
     
     %% WARNINGS
-    %#ok<*SETNU>
-    %#ok<*AGROW>
-    %#ok<*NBRAK>
+    %#ok<*SETNU,*AGROW,*NBRAK,*FPARK>
 
+    %% PARAMETERS
+    gsm_name        = 'fir_T_55_55_15';
+    delete_all      = 1;
+    mask_name       = '';       ... examples: '', 'visual', 'right', 'vmPFC', 'ACC'
+    basis_function  = 'fir';    ... examples: 'hrf', 'fir'
+    pars_ordfir  = 55;
+    pars_lenfir  = 55;
+    pars_delay   = 15;
+    
     %% GENERAL SETTINGS    
     % DIRECTORIES AND FILES
-    dir_spm                        = [fileparts(which('spm.m')),filesep];
+    dir_spm                         = [fileparts(which('spm.m')),filesep];
     % nii
-    dir_niistudy                   = [pwd(),filesep,'data',filesep,'nii',filesep];
-    dir_niisubs                    = dir([dir_niistudy,'sub_*']); dir_niisubs = strcat(dir_niistudy,strvcat(dir_niisubs.name),'/');
-    dir_niiepis3                   = strcat(dir_niisubs,'epi3',filesep);
+    dir_niistudy                    = [pwd(),filesep,'data',filesep,'nii',filesep];
+    dir_niisubs                     = dir([dir_niistudy,'sub_*']); dir_niisubs = strcat(dir_niistudy,strvcat(dir_niisubs.name),'/');
+    dir_niiepis3                    = strcat(dir_niisubs,'epi3',filesep);
     % data
-    dir_datsubs                    = [pwd(),filesep,'data',filesep,'data',filesep,'scanner',filesep];
-    dir_gsm                        = [pwd(),filesep,'data',filesep,'gsm3',filesep,'TSI_CGV_B_L_2',filesep];
-    dir_datcons                    = [dir_gsm,'conditions',filesep];
-    dir_datgsm1s                   = [dir_gsm,'firstlevel',filesep];
-    dir_datgsm2s                   = [dir_gsm,'secondlevel',filesep];
-    file_datsubs                   = dir([dir_datsubs,'data_*.mat']); file_datsubs = strcat(dir_datsubs,strvcat(file_datsubs.name));
-    file_datcons                   = dir([dir_datcons,'condition_*.mat']); file_datcons = strcat(dir_datcons,strvcat(file_datcons.name));
-    file_datreas                   = dir([dir_datcons,'realign_*.mat']); file_datreas = strcat(dir_datcons,strvcat(file_datreas.name));
-    file_datconms                  = dir([dir_datcons,'condition_*_merged.mat']); file_datconms = strcat(dir_datcons,strvcat(file_datconms.name));
-    file_datreams                  = dir([dir_datcons,'realign_*_merged.mat']); file_datreams = strcat(dir_datcons,strvcat(file_datreams.name));
+    dir_datsubs                     = [pwd(),filesep,'data',filesep,'data',filesep,'scanner',filesep];
+    dir_gsm                         = [pwd(),filesep,'data',filesep,'gsm3',filesep,gsm_name,filesep];
+    dir_datcons                     = [dir_gsm,'conditions',filesep];
+    dir_datgsm1s                    = [dir_gsm,'firstlevel',filesep];
+    dir_datgsm2s                    = [dir_gsm,'secondlevel',filesep];
+    dir_contrast                    = [dir_gsm,'contrasts',filesep];
+    file_datsubs                    = dir([dir_datsubs,'data_*.mat']); file_datsubs = strcat(dir_datsubs,strvcat(file_datsubs.name));
+    file_datcons                    = dir([dir_datcons,'condition_*.mat']); file_datcons = strcat(dir_datcons,strvcat(file_datcons.name));
+    file_datreas                    = dir([dir_datcons,'realign_*.mat']); file_datreas = strcat(dir_datcons,strvcat(file_datreas.name));
+    file_datconms                   = dir([dir_datcons,'condition_*_merged.mat']); file_datconms = strcat(dir_datcons,strvcat(file_datconms.name));
+    file_datreams                   = dir([dir_datcons,'realign_*_merged.mat']); file_datreams = strcat(dir_datcons,strvcat(file_datreams.name));
+    % masks
+    dir_mask                        = [pwd(),filesep,'data',filesep,'mask',filesep];
+    if isempty(mask_name),file_mask = {''};
+    else                  file_mask = {[dir_mask,mask_name,'.img,1']};
+    end
     
     % VARIABLES
     nb_subjects = size(dir_niisubs, 1);
     n_subject   = [1,2,3];
-    u_subject   = set_subjects();
-    
-    u_contrast  = { ...
-                    struct('name','t', 'convec',[ 1, 0, 0, 0, 0, 0, 0, 0]) ...
-                    struct('name','s', 'convec',[ 0, 1, 0, 0, 0, 0, 0, 0]) ...
-                    struct('name','i', 'convec',[ 0, 0, 1, 0, 0, 0, 0, 0]) ...
-                    ...
-                    struct('name','c', 'convec',[ 0, 0, 0, 1, 0, 0, 0, 0]) ...
-                    struct('name','g', 'convec',[ 0, 0, 0, 0, 0, 0, 1, 0]) ...
-                    struct('name','v', 'convec',[ 0, 0, 0, 0, 1, 0, 0, 0]) ...
-                    ...
-                    struct('name','b', 'convec',[ 0, 0, 0, 0, 0, 1, 0, 0]) ...
-                    ...
-                    struct('name','l', 'convec',[ 0, 0, 0, 0, 0, 0, 0, 1]) ...
-                  };
+    u_subject   = {};
+    u_contrast  = {};
               
-    % PARAMETERS
+    % SCANNER PARAMETERS
+    pars_nslices = 32;
     pars_tr      = 2;
+    pars_refsl   = ceil(.5*pars_nslices);
+    pars_ordsl   = [pars_nslices:-1:+1];
+    pars_reft0   = (find(pars_ordsl==pars_refsl)-1) * (pars_tr/pars_nslices);
     pars_voxs    = 4;
     
     % FLAGS
-    do_all  = false;
-    do_regs = do_all || ~exist(dir_datcons ,'file');
-    do_frst = do_all || ~exist(dir_datgsm1s,'file');
-    do_scnd = do_all || true;
+    do_regs = delete_all || ~exist(dir_datcons ,'file');
+    do_frst = delete_all || ~exist(dir_datgsm1s,'file');
+    do_scnd = delete_all || true;
     
     %% DELETE
     if do_regs && exist(dir_datcons ,'dir'); rmdir(dir_datcons ,'s'); end
     if do_frst && exist(dir_datgsm1s,'dir'); rmdir(dir_datgsm1s,'s'); end
     if do_scnd && exist(dir_datgsm2s,'dir'); rmdir(dir_datgsm2s,'s'); end
+    if do_scnd && exist(dir_contrast,'dir'); rmdir(dir_contrast,'s'); end
     
     %% JOBS
     tic();
-    spm_jobman('initcfg');
+    set_subjects();
+    spm_jobman('initcfg');      % set subjects
     build_regressors();         % build regressors
     merge_regressors();         % merge regressors
+    set_contrasts();            % set contrasts
     gsm_first_level();          % first  : level
     gsm_first_estimate();       % first  : estimate
     gsm_second_contrasts();     % second : contrasts
     gsm_second_copy();          % second : copy
     gsm_second_level();         % second : level
+    copy_contrasts();           % copy contrasts
     toc();
     
-    %% SET PARTICIPANTS
-    function u_subject = set_subjects()
+    %% SET SUBJECTS
+    function set_subjects()
         u_subject = 1:nb_subjects;
         u_subject(n_subject) = [];
         nb_subjects = length(u_subject);
     end
-    
+
     %% BUILD REGRESSORS
     function build_regressors()
         if ~do_regs; return; end
@@ -87,7 +94,7 @@ function scan3_gsm()
         if ~exist(dir_datcons,'dir'); mkdirp(dir_datcons); end
         % load data
         data  = load_data_ext( 'scanner');
-        index = load_index_ext('scanner');
+        bonus = load_bonus_ext('scanner');
         
         for sub = u_subject
             dir_niiepi3 = strtrim(dir_niiepis3(sub,:));
@@ -104,8 +111,8 @@ function scan3_gsm()
                 dir_niiimg     = strcat(dir_niirun,'images',filesep);
                 dir_niirea     = strcat(dir_niirun,'realignment',filesep);
                 dir_niismt     = strcat(dir_niirun,'smooth',filesep);
-                file_niirea    = dir([dir_niirea,'rp_image*.txt']);                       file_niirea = strcat(dir_niirea,strvcat(file_niirea.name));
-                file_niiimg    = dir([dir_niismt,sprintf('sw%duimages*.nii',pars_voxs)]); file_niiimg = strcat(dir_niismt,strvcat(file_niiimg.name));
+                file_niirea    = dir([dir_niirea,'rp_*image*.txt']);        file_niirea = strcat(dir_niirea,strvcat(file_niirea.name));
+                file_niiimg    = dir([dir_niismt,sprintf('*images*.nii')]); file_niiimg = strcat(dir_niismt,strvcat(file_niiimg.name));
                 
                 cond = {};
                 
@@ -118,6 +125,7 @@ function scan3_gsm()
                 z_gamble    = + data.resp_signed_gamble;... gamble
                 z_right     = + data.resp_signed_right; ... right
                 z_value     = + data.resp_value;        ... outcome
+                z_lucky     = z_gamble .* sign(z_value);...
                 z_valcum    = + data.resp_valcum;       ... cumulative outcome
                 % optimal
                 z_exv       = + data.vb_exv;            ... expected  values
@@ -166,10 +174,12 @@ function scan3_gsm()
 
                 V -- outcome                ... feedback
                 W -- cumulative reward
+                D -- lucky
 
                 BONUS REGRESSORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 B -- onset bonus
-                P -- outcome bonus
+                Q -- outcome bonus
+                Y -- frame length
 
                 LOTTERY REGRESSORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 L -- onset lottery
@@ -179,43 +189,44 @@ function scan3_gsm()
                 % CREATE TRIAL CONDITIONS
                 ii_sub   = (data.exp_subject == sub);
                 ii_run   = (data.exp_session == u_run(i_run));
-                ii       = (ii_sub & ii_run);
-                name     = 'T';
-                onset    = data.vb_onset(ii);
-                subnames = {'S','I'};
-                levels   = {z_sxv(ii),z_length(ii)};
-                cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
-                
-                % CREATE RESPONSE CONDITIONS
-                ii_sub   = (data.exp_subject == sub);
-                ii_run   = (data.exp_session == u_run(i_run));
                 ii_resp  = ~isnan(data.resp_gamble);
                 ii       = (ii_sub & ii_run & ii_resp);
-                name     = 'C';
-                onset    = data.resp_onset(ii);
-                subnames = {'G','V'};
-                levels   = {z_gamble(ii),z_value(ii)};
-                cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
-                
-                % CREATE BONUS CONDITIONS
-                ii_sub   = (index.sub_bonus == sub);
-                ii_run   = (index.ses_bonus == u_run(i_run));
-                ii       = (ii_sub & ii_run);
-                name     = 'B';
-                onset    = index.ons_bonus(ii);
+                name     = 'T';
+                onset    = data.vb_onset(ii) + pars_reft0 - pars_delay;
                 subnames = {};
                 levels   = {};
                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
                 
-                % CREATE LOTTERY CONDITIONS
-                ii_sub    = (index.sub_lottery == sub);
-                ii_run    = (index.ses_lottery == u_run(i_run));
-                ii        = (ii_sub & ii_run);
-                name     = 'L';
-                onset    = index.ons_lottery(ii);
-                subnames = {};
-                levels   = {};
-                cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
+%                 % CREATE RESPONSE CONDITIONS
+%                 ii_sub   = (data.exp_subject == sub);
+%                 ii_run   = (data.exp_session == u_run(i_run));
+%                 ii_resp  = ~isnan(data.resp_gamble);
+%                 ii       = (ii_sub & ii_run & ii_resp);
+%                 name     = 'C';
+%                 onset    = data.resp_onset(ii) + pars_reft0 - pars_delay;
+%                 subnames = {};
+%                 levels   = {};
+%                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
+                
+%                 % CREATE BONUS CONDITIONS
+%                 ii_sub   = (bonus.subject == sub);
+%                 ii_run   = (bonus.session == u_run(i_run));
+%                 ii       = (ii_sub & ii_run);
+%                 name     = 'B';
+%                 onset    = bonus.onset(ii) + pars_reft0 - pars_delay;
+%                 subnames = {'Q','Y'};
+%                 levels   = {bonus.bonus(ii),1 ./ bonus.length(ii)};
+%                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
+                
+%                 % CREATE LOTTERY CONDITIONS
+%                 ii_sub    = (index.sub_lottery == sub);
+%                 ii_run    = (index.ses_lottery == u_run(i_run));
+%                 ii        = (ii_sub & ii_run);
+%                 name     = 'L';
+%                 onset    = index.ons_lottery(ii) + pars_reft0 - pars_delay;
+%                 subnames = {};
+%                 levels   = {};
+%                 cond{end+1} = struct('name',name,'onset',{onset},'subname',{subnames},'level',{levels},'duration',{0});
                 
                 % load realignment
                 R = load(file_niirea);
@@ -236,7 +247,7 @@ function scan3_gsm()
         if ~do_regs; return; end
         for sub = u_subject
             dir_niiepi3 = strtrim(dir_niiepis3(sub,:));
-            fprintf('Building regressors for: %s\n',dir_niiepi3);
+            fprintf('Merge regressors for:    %s\n',dir_niiepi3);
             dir_niiruns = dir([dir_niiepi3,'run*']); dir_niiruns = strcat(strvcat(dir_niiruns.name),'/');
             nb_runs     = size(dir_niiruns, 1);
             u_run       = 1:nb_runs;
@@ -247,10 +258,15 @@ function scan3_gsm()
             for i_run = 1:nb_runs
                 run = u_run(i_run);
                 file_datreaR = sprintf('%srealign_sub_%02i_run_%02i.mat',  dir_datcons,sub,i_run);
-                tmp  = load(file_datreaR,'R');
+                % run onset
+                R     = [R,zeros(size(R,1),1)];
+                tmp   = load(file_datreaR,'R');
+                tmp.R = [tmp.R, zeros(size(tmp.R,1),i_run-1), ones(size(tmp.R,1),1)];
+                % concatenate
                 R = [R ; tmp.R];
                 nb_volumes(i_run) = size(tmp.R,1);
             end
+            R(:,end) = [];
             file_datreaS = sprintf('%srealign_sub_%02i_merged.mat',  dir_datcons,sub);
             save(file_datreaS,'R');
             
@@ -277,6 +293,34 @@ function scan3_gsm()
         % update file_datregs
         file_datconms = dir([dir_datcons,'condition_*_merged.mat']); file_datconms = strcat(dir_datcons,strvcat(file_datconms.name));
         file_datreams = dir([dir_datcons,'realign_*_merged.mat']);   file_datreams = strcat(dir_datcons,strvcat(file_datreams.name));
+    end
+    
+    %% SET CONTRASTS
+    function set_contrasts()
+        u_contrast  = {};
+        % set names
+        tmp = load(file_datconms(1,:),'cond');
+        u_name = {};
+        for i = 1:length(tmp.cond)
+            u_name = [u_name, {tmp.cond{i}.name}, tmp.cond{i}.subname];
+        end
+        n_name = length(u_name);
+        % set order
+        switch(basis_function)
+            case 'hrf', n_order = 1;
+            case 'fir', n_order = pars_ordfir;
+        end
+        % set contrasts
+        j_name = 0;
+        for i_name = 1:n_name
+            for i_order = 1:n_order
+                j_name = j_name + 1;
+                name_contrast = sprintf('%s_%03i',u_name{i_name},i_order);
+                conv_contrast = zeros(1,n_name*n_order);
+                conv_contrast(j_name) = 1;
+                u_contrast{j_name} = struct('name',name_contrast, 'convec',conv_contrast);
+            end
+        end
     end
     
     %% FIRST LEVEL
@@ -307,7 +351,7 @@ function scan3_gsm()
                 dir_niirun = strcat(dir_niiepi3,strtrim(dir_niiruns(i_run,:)));
                 dir_niiimg = strcat(dir_niirun,'images',filesep);
                 dir_niismt = strcat(dir_niirun,'smooth',filesep);
-                file_niiimg = cellstr(spm_select('FPlist', dir_niismt,['^',sprintf('sw%duimages',pars_voxs),'.*\.nii']));
+                file_niiimg = cellstr(spm_select('FPlist', dir_niismt,['^.*images.*\.nii']));
                 file_allimg = [file_allimg ; file_niiimg];
             end
             % job
@@ -336,10 +380,16 @@ function scan3_gsm()
             job.spm.stats.fmri_spec.sess.multi_reg = {file_datrea};
             % others
             job.spm.stats.fmri_spec.fact = struct('name',{},'levels',{});
-            job.spm.stats.fmri_spec.bases.hrf.derivs = [0 0];
+            switch(basis_function)
+                case 'hrf'
+                    job.spm.stats.fmri_spec.bases.hrf.derivs = [0 0];
+                case 'fir'
+                    job.spm.stats.fmri_spec.bases.fir.length = pars_lenfir;
+                    job.spm.stats.fmri_spec.bases.fir.order  = pars_ordfir;
+            end
             job.spm.stats.fmri_spec.volt = 1;
             job.spm.stats.fmri_spec.global = 'None';
-            job.spm.stats.fmri_spec.mask = {''};
+            job.spm.stats.fmri_spec.mask = file_mask;
             job.spm.stats.fmri_spec.cvi = 'AR(1)';
             % add job
             jobs{end+1} = job;
@@ -391,10 +441,12 @@ function scan3_gsm()
                 dir_datgsm1 = sprintf('%ssub_%02i/',dir_datgsm1s,i_sub);
                 dir_datgsm2 = sprintf('%scon_%s/',dir_datgsm2s,u_contrast{i_con}.name);
                 if ~exist(dir_datgsm2,'dir'); mkdirp(dir_datgsm2); end
-                copyfile(sprintf('%sspmT_%04i.hdr',dir_datgsm1,i_con),sprintf('%sspmT_sub%02i_con%02i.hdr',dir_datgsm2,i_sub,i_con));
-                copyfile(sprintf('%sspmT_%04i.img',dir_datgsm1,i_con),sprintf('%sspmT_sub%02i_con%02i.img',dir_datgsm2,i_sub,i_con));
-                copyfile(sprintf('%scon_%04i.hdr' ,dir_datgsm1,i_con),sprintf('%scon_sub%02i_con%02i.hdr' ,dir_datgsm2,i_sub,i_con));
-                copyfile(sprintf('%scon_%04i.img' ,dir_datgsm1,i_con),sprintf('%scon_sub%02i_con%02i.img' ,dir_datgsm2,i_sub,i_con));
+                if exist(sprintf('%sspmT_%04i.hdr',dir_datgsm1,i_con),'file'), copyfile(sprintf('%sspmT_%04i.hdr',dir_datgsm1,i_con),sprintf('%sspmT_sub%02i_con%02i.hdr',dir_datgsm2,i_sub,i_con)); end
+                if exist(sprintf('%sspmT_%04i.img',dir_datgsm1,i_con),'file'), copyfile(sprintf('%sspmT_%04i.img',dir_datgsm1,i_con),sprintf('%sspmT_sub%02i_con%02i.img',dir_datgsm2,i_sub,i_con)); end
+                if exist(sprintf('%sspmT_%04i.nii',dir_datgsm1,i_con),'file'), copyfile(sprintf('%sspmT_%04i.nii',dir_datgsm1,i_con),sprintf('%sspmT_sub%02i_con%02i.nii',dir_datgsm2,i_sub,i_con)); end
+                if exist(sprintf('%scon_%04i.hdr',dir_datgsm1,i_con),'file'), copyfile(sprintf('%scon_%04i.hdr' ,dir_datgsm1,i_con),sprintf('%scon_sub%02i_con%02i.hdr' ,dir_datgsm2,i_sub,i_con)); end
+                if exist(sprintf('%scon_%04i.img',dir_datgsm1,i_con),'file'), copyfile(sprintf('%scon_%04i.img' ,dir_datgsm1,i_con),sprintf('%scon_sub%02i_con%02i.img' ,dir_datgsm2,i_sub,i_con)); end
+                if exist(sprintf('%scon_%04i.nii',dir_datgsm1,i_con),'file'), copyfile(sprintf('%scon_%04i.nii' ,dir_datgsm1,i_con),sprintf('%scon_sub%02i_con%02i.nii' ,dir_datgsm2,i_sub,i_con)); end
             end
         end
     end
@@ -410,10 +462,13 @@ function scan3_gsm()
             job = struct();
             job.spm.stats.factorial_design.dir                      = {dir_datgsm2};
             job.spm.stats.factorial_design.des.t1.scans             = cellstr(spm_select('FPlist', dir_datgsm2, '^spmT_.*\.img$'));
+            if isempty(job.spm.stats.factorial_design.des.t1.scans{1}),
+                job.spm.stats.factorial_design.des.t1.scans             = cellstr(spm_select('FPlist', dir_datgsm2, '^spmT_.*\.nii$'));
+            end
             job.spm.stats.factorial_design.cov                      = struct('c', {}, 'cname', {}, 'iCFI', {}, 'iCC', {});
             job.spm.stats.factorial_design.masking.tm.tm_none       = 1;    % threshold masking
             job.spm.stats.factorial_design.masking.im               = 1;    % implicit mask
-            job.spm.stats.factorial_design.masking.em               = {''}; % explicit mask
+            job.spm.stats.factorial_design.masking.em               = file_mask; % explicit mask
             job.spm.stats.factorial_design.globalc.g_omit           = 1;    % dont know what it is
             job.spm.stats.factorial_design.globalm.gmsca.gmsca_no   = 1;    % grand mean scaling
             job.spm.stats.factorial_design.globalm.glonorm          = 1;    % global normalization
@@ -435,4 +490,20 @@ function scan3_gsm()
         spm_jobman('run',jobs);
     end
     
+    %% COPY CONTRASTS
+    function copy_contrasts()
+        mkdirp(dir_contrast);
+        for i_con = 1:length(u_contrast)
+            img_from = sprintf('%scon_%s/spmT_0001.img',dir_datgsm2s,u_contrast{i_con}.name);
+            img_to   = sprintf('%s/con_%s.img',dir_contrast,u_contrast{i_con}.name);
+            if exist(img_from,'file'), copyfile(img_from,img_to); end
+            hdr_from = sprintf('%scon_%s/spmT_0001.hdr',dir_datgsm2s,u_contrast{i_con}.name);
+            hdr_to   = sprintf('%s/con_%s.hdr',dir_contrast,u_contrast{i_con}.name);
+            if exist(hdr_from,'file'), copyfile(hdr_from,hdr_to); end
+            nii_from = sprintf('%scon_%s/spmT_0001.nii',dir_datgsm2s,u_contrast{i_con}.name);
+            nii_to   = sprintf('%s/con_%s.nii',dir_contrast,u_contrast{i_con}.name);
+            if exist(nii_from,'file'), copyfile(nii_from,nii_to); end
+        end
+    end
+
 end
