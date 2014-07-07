@@ -1,0 +1,29 @@
+Occipital Ventral stream
+  T – activated with trial/feedback
+  G – more activated when gambling (because we don't know the outcome)
+  B – activated when you see the bonus
+  SUMMARY : Visual information
+
+ACC
+  T – only initial dip
+  G – activated when gambling
+  B – activated with bonus
+  SUMMARY : correlates with commit to change?
+
+Insula
+  T – activated with trial/feedback
+  G – more activated when gambling
+  B – activated with bonus
+  SUMMARY : ??
+
+vmPFC
+  T – deactivated with trial/feedback
+  Q – more activated with bigger bonus
+
+
+
+To explore:
+  1– does vmPFC correlate with length of journey at the end of the frame? NO
+  2– does insula correlate with risk?
+  3– what correlates with outcome? 
+  4– ranks?
